@@ -19,7 +19,7 @@
 
 环境变量开关：`ARCH`（默认 `uname -m`）、`ENV_NAME`（默认 `cannsim`）、`PY_VER`、`MINIFORGE_DIR`、`SKIP_REAL_SIM=1`（跳过真实算子仿真）、`RUN_ALL=1`（`test` 时跑全量）。真实算子仿真复用 `harness/run_one.sh examples/ascendc/vector/add`，该脚本自包含（自动 source conda + set_env，构建、record、校验）。
 
-## 当前状态：**84/84 仿真通过** ✅（含 23 个高阶数学算子 + 带 Tiling 算子 SoftMax/LogSoftmax/RmsNorm/LayerNorm/GroupNorm/DeepNorm/BatchNorm/Matmul/TopK/Broadcast + Transpose/Sort/Pad + 数据重排 Duplicate/Gather/Scatter/CreateVecIndex/Brcb + 计算 Axpy/MulCast/Compare/GatherMask + 原子 AtomicAdd + 标量 ScalarCast + 多核同步 SyncAll/IBSet/IBWait + half 变体 AddHalf/CastF2H）
+## 报告与文档
 
 总表（指令数/耗时/报告链接）：[`reports/INDEX.md`](reports/INDEX.md)（aarch64）· [`reports/INDEX.x86_64.md`](reports/INDEX.x86_64.md)（x86_64）
 性能分析（指令数/耗时横向对比 + 洞察）：[`reports/PERF.zh-CN.md`](reports/PERF.zh-CN.md)

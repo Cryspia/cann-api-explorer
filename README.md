@@ -19,9 +19,7 @@ The environment is built by this directory's [`install.sh`](install.sh), which i
 
 Env knobs: `ARCH` (default `uname -m`), `ENV_NAME` (default `cannsim`), `PY_VER`, `MINIFORGE_DIR`, `SKIP_REAL_SIM=1` (skip real-op sim), `RUN_ALL=1` (run all units in `test`). The real-operator simulation reuses `harness/run_one.sh examples/ascendc/vector/add`, which is self-contained (sources conda + set_env, builds, records, verifies).
 
-## Current status: **84/84 simulations passed** ✅
-
-23 high-level math operators + tiling operators SoftMax/LogSoftmax/RmsNorm/LayerNorm/GroupNorm/DeepNorm/BatchNorm/Matmul/TopK/Broadcast + Transpose/Sort/Pad + data-rearrange Duplicate/Gather/Scatter/CreateVecIndex/Brcb + compute Axpy/MulCast/Compare/GatherMask + atomic AtomicAdd + scalar ScalarCast + multi-core sync SyncAll/IBSet/IBWait + half variants AddHalf/CastF2H.
+## Reports & docs
 
 - Aggregate table (instr count / time / report links): [`reports/INDEX.md`](reports/INDEX.md) (aarch64) · [`reports/INDEX.x86_64.md`](reports/INDEX.x86_64.md) (x86_64)
 - Performance analysis (instr/time comparison + insights): [`reports/PERF.md`](reports/PERF.md)
