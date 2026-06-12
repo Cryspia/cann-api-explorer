@@ -53,13 +53,18 @@ int32_t main()
     printf("chain=[%d,%d,%d,..,%d] expect[0,1,2,..,%d] errors=%d\n",
            chainH[0], chainH[SLOT], chainH[2 * SLOT], chainH[(N - 1) * SLOT], N, errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("DETERMINESYNC SIMULATION PASSED\n");
+    else             printf("DETERMINESYNC SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(chainD)); CHECK_ACL(aclrtFree(syncD));
     CHECK_ACL(aclrtFreeHost(chainH)); CHECK_ACL(aclrtFreeHost(syncH));
     CHECK_ACL(aclrtDestroyStream(stream));
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) { printf("DETERMINESYNC SIMULATION PASSED\n"); return 0; }
-    printf("DETERMINESYNC SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

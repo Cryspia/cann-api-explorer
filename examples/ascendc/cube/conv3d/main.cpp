@@ -88,13 +88,18 @@ int32_t main()
     }
     printf("out[0..2]=[0x%04X,0x%04X,0x%04X] expect=0x%04X errors=%d\n", oH[0], oH[1], oH[2], H_EIGHT, errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("CONV3D SIMULATION PASSED\n");
+    else             printf("CONV3D SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(fD)); CHECK_ACL(aclrtFree(wD)); CHECK_ACL(aclrtFree(oD)); CHECK_ACL(aclrtFree(tD));
     CHECK_ACL(aclrtFreeHost(fH)); CHECK_ACL(aclrtFreeHost(wH)); CHECK_ACL(aclrtFreeHost(oH)); CHECK_ACL(aclrtFreeHost(tH));
     CHECK_ACL(aclrtDestroyStream(stream));
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) { printf("CONV3D SIMULATION PASSED\n"); return 0; }
-    printf("CONV3D SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

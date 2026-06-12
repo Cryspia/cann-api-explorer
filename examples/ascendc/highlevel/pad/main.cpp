@@ -55,14 +55,19 @@ int32_t main()
     for (int i = 0; i < W; i++) printf("%g%s", zH[i], i < W - 1 ? "," : "");
     printf("] errors=%d\n", errors);
 
+    (void)RIGHT_PAD;
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("PAD SIMULATION PASSED\n");
+    else             printf("PAD SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xD)); CHECK_ACL(aclrtFree(zD));
     CHECK_ACL(aclrtFreeHost(xH)); CHECK_ACL(aclrtFreeHost(zH));
     CHECK_ACL(aclrtDestroyStream(stream));
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    (void)RIGHT_PAD;
-    if (errors == 0) { printf("PAD SIMULATION PASSED\n"); return 0; }
-    printf("PAD SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

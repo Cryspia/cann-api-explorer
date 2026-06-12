@@ -69,6 +69,13 @@ int32_t main()
     if (fabsf(meanH[0] - 2.0f) > 1e-3f) { printf("[CHECK] mean=%g (expect 2)\n", meanH[0]); errors++; }
     printf("dst=[%g,%g,...,%g] mean=%g errors=%d\n", zH[0], zH[1], zH[H - 1], meanH[0], errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("DEEPNORM SIMULATION PASSED\n");
+    else             printf("DEEPNORM SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xD)); CHECK_ACL(aclrtFree(gxD)); CHECK_ACL(aclrtFree(betaD));
     CHECK_ACL(aclrtFree(gammaD)); CHECK_ACL(aclrtFree(zD)); CHECK_ACL(aclrtFree(meanD)); CHECK_ACL(aclrtFree(rstdD));
     CHECK_ACL(aclrtFreeHost(xH)); CHECK_ACL(aclrtFreeHost(gxH)); CHECK_ACL(aclrtFreeHost(betaH));
@@ -78,7 +85,5 @@ int32_t main()
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) { printf("DEEPNORM SIMULATION PASSED\n"); return 0; }
-    printf("DEEPNORM SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

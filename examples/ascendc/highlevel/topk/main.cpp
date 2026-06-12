@@ -79,6 +79,13 @@ int32_t main()
     printf("top4 val=[%g,%g,%g,%g] idx=[%d,%d,%d,%d] errors=%d\n",
            zH[0], zH[1], zH[2], zH[3], ziH[0], ziH[1], ziH[2], ziH[3], errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("TOPK SIMULATION PASSED\n");
+    else             printf("TOPK SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xD)); CHECK_ACL(aclrtFree(iD)); CHECK_ACL(aclrtFree(zD));
     CHECK_ACL(aclrtFree(ziD)); CHECK_ACL(aclrtFree(tD));
     CHECK_ACL(aclrtFreeHost(xH)); CHECK_ACL(aclrtFreeHost(iH)); CHECK_ACL(aclrtFreeHost(zH));
@@ -87,7 +94,5 @@ int32_t main()
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) { printf("TOPK SIMULATION PASSED\n"); return 0; }
-    printf("TOPK SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

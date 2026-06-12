@@ -59,13 +59,18 @@ int32_t main()
            flagH[0], flagH[SLOT], flagH[(N - 1) * SLOT],
            resH[0], resH[SLOT], resH[(N - 1) * SLOT], expectSum, errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("SYNCALL SIMULATION PASSED\n");
+    else             printf("SYNCALL SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(flagD)); CHECK_ACL(aclrtFree(resD)); CHECK_ACL(aclrtFree(syncD));
     CHECK_ACL(aclrtFreeHost(flagH)); CHECK_ACL(aclrtFreeHost(resH)); CHECK_ACL(aclrtFreeHost(syncH));
     CHECK_ACL(aclrtDestroyStream(stream));
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) { printf("SYNCALL SIMULATION PASSED\n"); return 0; }
-    printf("SYNCALL SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

@@ -10,6 +10,12 @@ MINIFORGE_DIR="${MINIFORGE_DIR:-$HOME/miniforge3}"
 ENV_NAME="${ENV_NAME:-cannsim}"
 SET_ENV="$MINIFORGE_DIR/envs/$ENV_NAME/cann/ascend-toolkit/set_env.sh"
 
+# Tag the per-unit result file by host CPU arch so a run on one host never clobbers
+# another host's committed baseline. aarch64 keeps the original unsuffixed name
+# (the repo's committed ARM baseline); other arches get an arch suffix.
+REPORT_ARCH="${REPORT_ARCH:-$(uname -m)}"
+if [ "$REPORT_ARCH" = "aarch64" ]; then RESULT_FILE="RESULT.md"; else RESULT_FILE="RESULT.${REPORT_ARCH}.md"; fi
+
 UNIT="${1:?usage: run_one.sh <unit_dir>}"
 UNIT="$(cd "$UNIT" && pwd)"
 META="$UNIT/meta.json"
@@ -77,6 +83,7 @@ REPORT_FILES="$(cd report 2>/dev/null && find . -type f | sed 's|^\./||' | sort 
   echo "# $NAME -- simulation result"
   echo
   echo "- Status: **$STATUS**"
+  echo "- Host arch: \`$REPORT_ARCH\`"
   echo "- Build SOC: \`$SOC_BUILD\`  Run SOC: \`$SOC_RUN\`"
   echo "- PASS marker: \`$PASS_MARKER\`"
   echo "- Instruction count: $INSTR"
@@ -91,7 +98,7 @@ REPORT_FILES="$(cd report 2>/dev/null && find . -type f | sed 's|^\./||' | sort 
   echo '```'
   echo "$REPORT_FILES"
   echo '```'
-} > RESULT.md
+} > "$RESULT_FILE"
 
-echo "[$STATUS] $NAME  (instr=$INSTR, time_ns=$TIME_NS)  -> $UNIT/RESULT.md"
+echo "[$STATUS] $NAME  (instr=$INSTR, time_ns=$TIME_NS)  -> $UNIT/$RESULT_FILE"
 [ "$STATUS" = "passed" ]

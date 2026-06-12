@@ -54,10 +54,16 @@ int32_t main()
     for (int i = 0; i < N; i++) { float v = H2F(zH[i]); if (fabsf(v - 3.0f) > 1e-2f) { if (errors < 5) printf("[CHECK] z[%d]=%g\n", i, v); errors++; } }
     printf("z[0..2]=[%g,%g,%g] (half 1+2=3) errors=%d\n", H2F(zH[0]), H2F(zH[1]), H2F(zH[2]), errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("ADD_HALF SIMULATION PASSED\n");
+    else             printf("ADD_HALF SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xD)); CHECK_ACL(aclrtFree(yD)); CHECK_ACL(aclrtFree(zD));
     CHECK_ACL(aclrtFreeHost(xH)); CHECK_ACL(aclrtFreeHost(yH)); CHECK_ACL(aclrtFreeHost(zH));
     CHECK_ACL(aclrtDestroyStream(stream)); CHECK_ACL(aclrtResetDevice(0)); CHECK_ACL(aclFinalize());
-    if (errors == 0) { printf("ADD_HALF SIMULATION PASSED\n"); return 0; }
-    printf("ADD_HALF SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+
+    return errors == 0 ? 0 : 1;
 }

@@ -36,9 +36,15 @@ int32_t main()
     for (int i = 0; i < N; i++) if (zH[i] != (float)i) { if (errors < 5) printf("[CHECK] z[%d]=%g (expect %d)\n", i, zH[i], i); errors++; }
     printf("z[0..3]=[%g,%g,%g,%g] errors=%d\n", zH[0], zH[1], zH[2], zH[3], errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("CREATEVECINDEX SIMULATION PASSED\n");
+    else             printf("CREATEVECINDEX SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(zD)); CHECK_ACL(aclrtFreeHost(zH));
     CHECK_ACL(aclrtDestroyStream(stream)); CHECK_ACL(aclrtResetDevice(0)); CHECK_ACL(aclFinalize());
-    if (errors == 0) { printf("CREATEVECINDEX SIMULATION PASSED\n"); return 0; }
-    printf("CREATEVECINDEX SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+
+    return errors == 0 ? 0 : 1;
 }

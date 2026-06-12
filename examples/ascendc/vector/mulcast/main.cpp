@@ -35,10 +35,16 @@ int32_t main()
     for (int i = 0; i < N; i++) { int32_t ev = 2 * i; if (zH[i] != ev) { if (errors < 5) printf("[CHECK] z[%d]=%d (expect %d)\n", i, zH[i], ev); errors++; } }
     printf("z[0..3]=[%d,%d,%d,%d] errors=%d\n", zH[0], zH[1], zH[2], zH[3], errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("MULCAST SIMULATION PASSED\n");
+    else             printf("MULCAST SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(x0D)); CHECK_ACL(aclrtFree(x1D)); CHECK_ACL(aclrtFree(zD));
     CHECK_ACL(aclrtFreeHost(x0H)); CHECK_ACL(aclrtFreeHost(x1H)); CHECK_ACL(aclrtFreeHost(zH));
     CHECK_ACL(aclrtDestroyStream(stream)); CHECK_ACL(aclrtResetDevice(0)); CHECK_ACL(aclFinalize());
-    if (errors == 0) { printf("MULCAST SIMULATION PASSED\n"); return 0; }
-    printf("MULCAST SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+
+    return errors == 0 ? 0 : 1;
 }

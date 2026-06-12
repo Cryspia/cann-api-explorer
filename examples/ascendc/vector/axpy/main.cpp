@@ -32,10 +32,16 @@ int32_t main()
     for (int i = 0; i < N; i++) { float ev = 1.0f + 2.0f * i; if (fabsf(zH[i] - ev) > 1e-3f) { if (errors < 5) printf("[CHECK] z[%d]=%g (expect %g)\n", i, zH[i], ev); errors++; } }
     printf("z[0..3]=[%g,%g,%g,%g] errors=%d\n", zH[0], zH[1], zH[2], zH[3], errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("AXPY SIMULATION PASSED\n");
+    else             printf("AXPY SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xD)); CHECK_ACL(aclrtFree(zD));
     CHECK_ACL(aclrtFreeHost(xH)); CHECK_ACL(aclrtFreeHost(zH));
     CHECK_ACL(aclrtDestroyStream(stream)); CHECK_ACL(aclrtResetDevice(0)); CHECK_ACL(aclFinalize());
-    if (errors == 0) { printf("AXPY SIMULATION PASSED\n"); return 0; }
-    printf("AXPY SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+
+    return errors == 0 ? 0 : 1;
 }

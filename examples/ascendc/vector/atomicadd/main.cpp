@@ -31,9 +31,15 @@ int32_t main()
     for (int i = 0; i < N; i++) if (fabsf(zH[i] - 8.0f) > 1e-3f) { if (errors < 5) printf("[CHECK] z[%d]=%g (expect 8)\n", i, zH[i]); errors++; }
     printf("z[0..2]=[%g,%g,%g] errors=%d\n", zH[0], zH[1], zH[2], errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("ATOMICADD SIMULATION PASSED\n");
+    else             printf("ATOMICADD SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(zD)); CHECK_ACL(aclrtFreeHost(zH));
     CHECK_ACL(aclrtDestroyStream(stream)); CHECK_ACL(aclrtResetDevice(0)); CHECK_ACL(aclFinalize());
-    if (errors == 0) { printf("ATOMICADD SIMULATION PASSED\n"); return 0; }
-    printf("ATOMICADD SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+
+    return errors == 0 ? 0 : 1;
 }

@@ -69,6 +69,13 @@ int32_t main()
     }
     printf("z[0]=%f z[last]=%f total=%d errors=%d\n", zHost[0], zHost[totalLen - 1], totalLen, errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("HYPOT SIMULATION PASSED\n");
+    else             printf("HYPOT SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xDev));
     CHECK_ACL(aclrtFree(yDev));
     CHECK_ACL(aclrtFree(zDev));
@@ -79,10 +86,5 @@ int32_t main()
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) {
-        printf("HYPOT SIMULATION PASSED\n");
-        return 0;
-    }
-    printf("HYPOT SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

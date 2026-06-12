@@ -19,6 +19,7 @@
 #   ./install.sh --help
 #
 # Optional environment variable overrides:
+#   ARCH=$(uname -m)            # host CPU arch (aarch64 | x86_64); picks the CANN .run + miniforge installer
 #   ENV_NAME=cannsim            # conda env name
 #   PY_VER=3.10                 # python version of the env
 #   MINIFORGE_DIR=$HOME/miniforge3
@@ -33,13 +34,26 @@ set -euo pipefail
 # ----------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-CANN_URL="https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%209.1.T1/Ascend-cann_9.1.0-beta.1_linux-aarch64.run"
-CANN_RUN="${SCRIPT_DIR}/Ascend-cann_9.1.0-beta.1_linux-aarch64.run"
-# Compatibility: after install.sh was moved into cann-api-explorer/, the .run package may still be in the parent directory
-[ -f "$CANN_RUN" ] || CANN_RUN="${SCRIPT_DIR}/../Ascend-cann_9.1.0-beta.1_linux-aarch64.run"
+# Host CPU architecture (aarch64 | x86_64). Both the CANN .run package and the
+# miniforge installer use this exact token in their file names, so it drives the
+# download URLs below. Override with ARCH=... only for cross-arch debugging.
+ARCH="${ARCH:-$(uname -m)}"
+case "$ARCH" in
+    aarch64|arm64)  ARCH="aarch64" ;;
+    x86_64|amd64)   ARCH="x86_64" ;;
+    *) echo "[ERROR] unsupported CPU architecture: $ARCH (supported: aarch64, x86_64)" >&2; exit 1 ;;
+esac
+
+CANN_URL="https://ascend-repo.obs.cn-east-2.myhuaweicloud.com/CANN/CANN%209.1.T1/Ascend-cann_9.1.0-beta.1_linux-${ARCH}.run"
+CANN_PKG="Ascend-cann_9.1.0-beta.1_linux-${ARCH}.run"
+# Download/keep the .run inside this repo directory (it is gitignored via *.run).
+CANN_RUN="${SCRIPT_DIR}/${CANN_PKG}"
+# Compatibility: only reuse a copy already sitting in the parent directory; new
+# downloads always go to the repo directory above, never the parent.
+[ -f "$CANN_RUN" ] || [ ! -f "${SCRIPT_DIR}/../${CANN_PKG}" ] || CANN_RUN="${SCRIPT_DIR}/../${CANN_PKG}"
 
 MINIFORGE_DIR="${MINIFORGE_DIR:-$HOME/miniforge3}"
-MINIFORGE_URL="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh"
+MINIFORGE_URL="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-${ARCH}.sh"
 
 ENV_NAME="${ENV_NAME:-cannsim}"
 PY_VER="${PY_VER:-3.10}"
@@ -114,7 +128,7 @@ install_miniforge() {
         log "already present, skipping: $MINIFORGE_DIR"
         return
     fi
-    local installer="/tmp/Miniforge3-Linux-aarch64.sh"
+    local installer="/tmp/Miniforge3-Linux-${ARCH}.sh"
     log "downloading the miniforge installer..."
     if command -v curl >/dev/null 2>&1; then
         curl -fL -o "$installer" "$MINIFORGE_URL"
@@ -173,8 +187,14 @@ install_toolkit() {
     log "install target: $tdir"
     log "mode: --full --whitelist=toolkit (does not install the NPU driver)"
     chmod +x "$CANN_RUN" 2>/dev/null || true
+    # The Ascend installer writes its security/operation logs to $HOME/var/log/ascend_seclog
+    # by default, scattering an Ascend dir under the user's HOME. The log root follows $HOME,
+    # so point HOME at the toolkit dir for just this command -> logs land under the env
+    # (removed on uninstall) and nothing is created in the real HOME.
+    local install_home="${tdir}/install_home"
+    mkdir -p "$install_home"
     # the env is activated -> the pip packages bundled in the installer land in this env's site-packages (not the system python)
-    bash "$CANN_RUN" --full --whitelist=toolkit --install-path="$tdir" --quiet
+    HOME="$install_home" bash "$CANN_RUN" --full --whitelist=toolkit --install-path="$tdir" --quiet
 
     local se; se="$(find_set_env)"
     [ -n "$se" ] || die "set_env.sh not found after Toolkit install, the install may have failed"
@@ -225,7 +245,7 @@ auto_pick_soc() {
 # Step 5: install the cannsim CLI (wheel) + Python runtime dependencies
 # ----------------------------------------------------------------------------
 # Find the cannsim wheel: bundled inside the toolkit installed from the full CANN package
-# (.../cann/<ver>/aarch64-linux/simulator/bin/cannsim-*.whl); take it only from the toolkit.
+# (.../cann/<ver>/<arch>-linux/simulator/bin/cannsim-*.whl); take it only from the toolkit.
 locate_cannsim_wheel() {
     find "$(toolkit_dir)" -name 'cannsim-*.whl' 2>/dev/null | head -1
 }

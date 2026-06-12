@@ -66,6 +66,13 @@ int32_t main()
     if (fabsf(meanH[0] - 5.0f) > 1e-3f) { printf("[CHECK] mean[0]=%g (expect 5)\n", meanH[0]); errors++; }
     printf("out[0..2]=[%g,%g,%g] mean[0]=%g errors=%d\n", zH[0], zH[1], zH[2], meanH[0], errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("BATCHNORM SIMULATION PASSED\n");
+    else             printf("BATCHNORM SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xD)); CHECK_ACL(aclrtFree(gammaD)); CHECK_ACL(aclrtFree(betaD));
     CHECK_ACL(aclrtFree(zD)); CHECK_ACL(aclrtFree(meanD)); CHECK_ACL(aclrtFree(varD));
     CHECK_ACL(aclrtFreeHost(xH)); CHECK_ACL(aclrtFreeHost(gammaH)); CHECK_ACL(aclrtFreeHost(betaH));
@@ -74,7 +81,5 @@ int32_t main()
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) { printf("BATCHNORM SIMULATION PASSED\n"); return 0; }
-    printf("BATCHNORM SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

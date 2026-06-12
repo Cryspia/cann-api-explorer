@@ -76,6 +76,13 @@ int32_t main()
     printf("dst[0][1]=%f (expect 16) dst[1][0]=%f (expect 1) errors=%d\n",
            H2F(zHost[0 * W + 1]), H2F(zHost[1 * W + 0]), errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("TRANSPOSE SIMULATION PASSED\n");
+    else             printf("TRANSPOSE SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xDev));
     CHECK_ACL(aclrtFree(zDev));
     CHECK_ACL(aclrtFreeHost(xHost));
@@ -84,10 +91,5 @@ int32_t main()
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) {
-        printf("TRANSPOSE SIMULATION PASSED\n");
-        return 0;
-    }
-    printf("TRANSPOSE SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

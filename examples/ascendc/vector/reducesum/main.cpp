@@ -52,6 +52,13 @@ int32_t main()
     }
     printf("dst[0]=%f expect=%f errors=%d\n", v, expect, errors);
 
+    // Emit the PASS/FAIL marker BEFORE ACL teardown: on some hosts aclFinalize()
+    // ends the process / closes the simulator's stdout capture, so a marker printed
+    // afterwards is never recorded. errors is already final here.
+    if (errors == 0) printf("REDUCESUM SIMULATION PASSED\n");
+    else             printf("REDUCESUM SIMULATION FAILED (%d errors)\n", errors);
+    fflush(stdout);
+
     CHECK_ACL(aclrtFree(xDev));
     CHECK_ACL(aclrtFree(zDev));
     CHECK_ACL(aclrtFreeHost(xHost));
@@ -60,10 +67,5 @@ int32_t main()
     CHECK_ACL(aclrtResetDevice(0));
     CHECK_ACL(aclFinalize());
 
-    if (errors == 0) {
-        printf("REDUCESUM SIMULATION PASSED\n");
-        return 0;
-    }
-    printf("REDUCESUM SIMULATION FAILED (%d errors)\n", errors);
-    return 1;
+    return errors == 0 ? 0 : 1;
 }

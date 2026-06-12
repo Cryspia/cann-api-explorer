@@ -6,7 +6,9 @@ For each CANN 9.1.0-beta.1 API, write a **minimal runnable example**, run it und
 
 ## Setup
 
-**System requirements**: Linux **aarch64 (arm64v8+)** only — the CANN `.run` package and miniforge are hardcoded to `linux-aarch64`. Auto-installing the system libraries (`libnuma1`/`libgomp1`/`libssl-dev`) assumes a **Debian/Ubuntu-family (apt)** distro; on non-apt distros, install those libraries manually.
+**System requirements**: Linux **aarch64 (arm64v8+)** or **x86_64**. `install.sh` auto-detects the host CPU via `uname -m` and downloads the matching CANN `.run` package + miniforge installer (override with `ARCH=aarch64|x86_64`). Auto-installing the system libraries (`libnuma1`/`libgomp1`/`libssl-dev`) assumes a **Debian/Ubuntu-family (apt)** distro; on non-apt distros, install those libraries manually.
+
+Results are tagged by host arch so the two platforms never clobber each other: aarch64 keeps the original unsuffixed names (`RESULT.md`, `reports/INDEX.md`); other arches get a suffix (e.g. `RESULT.x86_64.md`, `reports/INDEX.x86_64.md`). The deterministic CAModel metrics (instruction count, execution-time ns) are host-independent — they should match across arches for the same kernel — while the host CPU only affects the simulator's own wall-clock speed.
 
 The environment is built by this directory's [`install.sh`](install.sh), which installs the CANN Toolkit + the cannsim CLI into an isolated conda env `cannsim` (toolkit only, **no NPU driver** — pure card-free simulation):
 
@@ -15,14 +17,15 @@ The environment is built by this directory's [`install.sh`](install.sh), which i
 - `./install.sh test-all` — test + **full re-run of all units** (`run_all.sh`).
 - `./install.sh uninstall` — remove the conda env (keeps miniforge and the downloaded `.run`).
 
-Env knobs: `ENV_NAME` (default `cannsim`), `PY_VER`, `MINIFORGE_DIR`, `SKIP_REAL_SIM=1` (skip real-op sim), `RUN_ALL=1` (run all units in `test`). The real-operator simulation reuses `harness/run_one.sh examples/ascendc/vector/add`, which is self-contained (sources conda + set_env, builds, records, verifies).
+Env knobs: `ARCH` (default `uname -m`), `ENV_NAME` (default `cannsim`), `PY_VER`, `MINIFORGE_DIR`, `SKIP_REAL_SIM=1` (skip real-op sim), `RUN_ALL=1` (run all units in `test`). The real-operator simulation reuses `harness/run_one.sh examples/ascendc/vector/add`, which is self-contained (sources conda + set_env, builds, records, verifies).
 
 ## Current status: **84/84 simulations passed** ✅
 
 23 high-level math operators + tiling operators SoftMax/LogSoftmax/RmsNorm/LayerNorm/GroupNorm/DeepNorm/BatchNorm/Matmul/TopK/Broadcast + Transpose/Sort/Pad + data-rearrange Duplicate/Gather/Scatter/CreateVecIndex/Brcb + compute Axpy/MulCast/Compare/GatherMask + atomic AtomicAdd + scalar ScalarCast + multi-core sync SyncAll/IBSet/IBWait + half variants AddHalf/CastF2H.
 
-- Aggregate table (instr count / time / report links): [`reports/INDEX.md`](reports/INDEX.md)
+- Aggregate table (instr count / time / report links): [`reports/INDEX.md`](reports/INDEX.md) (aarch64) · [`reports/INDEX.x86_64.md`](reports/INDEX.x86_64.md) (x86_64)
 - Performance analysis (instr/time comparison + insights): [`reports/PERF.md`](reports/PERF.md)
+- Cross-arch comparison (aarch64 vs x86_64): [`reports/PERF.x86_64.md`](reports/PERF.x86_64.md)
 - API doc index: [`docs/INDEX.md`](docs/INDEX.md)
 
 ## Arity families covered (9)

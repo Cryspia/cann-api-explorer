@@ -10,8 +10,10 @@ Usage:
   python3 harness/gen.py                # generate all auto-generatable units
   python3 harness/gen.py Add Exp Sub    # generate only the given APIs (case-insensitive)
 """
+import glob
 import json
 import os
+import platform
 import sys
 
 import yaml
@@ -43,7 +45,19 @@ GENERATABLE_DTYPES = {"float", "int16_t", "int32_t"}
 _TK = os.environ.get(
     "ASCEND_TOOLKIT_HOME",
     os.path.expanduser("~/miniforge3/envs/cannsim/cann/cann-9.1.0-beta.1"))
-HDR_DIR = os.path.join(_TK, "aarch64-linux", "asc", "include", "interface")
+
+
+def _arch_linux_dir(tk):
+    """The toolkit's arch-specific dir is named <arch>-linux (aarch64-linux / x86_64-linux);
+    pick whichever actually exists rather than hardcoding the arch."""
+    cand = os.path.join(tk, platform.machine() + "-linux")
+    if os.path.isdir(cand):
+        return cand
+    hits = sorted(glob.glob(os.path.join(tk, "*-linux")))
+    return hits[0] if hits else cand
+
+
+HDR_DIR = os.path.join(_arch_linux_dir(_TK), "asc", "include", "interface")
 
 
 def find_header(header):

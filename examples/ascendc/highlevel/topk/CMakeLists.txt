@@ -26,7 +26,10 @@ ascendc_library(kernels STATIC kernel.cpp)
 
 # Host-side executable
 add_executable(sim_exe main.cpp)
-target_include_directories(sim_exe PRIVATE ${ASCEND_CANN_PACKAGE_PATH}/include ${ASCEND_CANN_PACKAGE_PATH}/aarch64-linux/asc/include/adv_api/sort)
+# adv_api/sort headers (topk_utils_constants.h, pulled in by topk_tiling.h) live under
+# the toolkit's arch-specific dir (aarch64-linux or x86_64-linux); glob whichever exists.
+file(GLOB _ADV_API_SORT_DIRS ${ASCEND_CANN_PACKAGE_PATH}/*-linux/asc/include/adv_api/sort)
+target_include_directories(sim_exe PRIVATE ${ASCEND_CANN_PACKAGE_PATH}/include ${_ADV_API_SORT_DIRS})
 target_link_libraries(sim_exe PRIVATE kernels)
 
 # Matmul host side needs the matmul_tiling API: link tiling_api + platform

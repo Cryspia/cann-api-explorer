@@ -6,7 +6,9 @@
 
 ## 环境搭建
 
-**系统要求**：仅支持 Linux **aarch64（arm64v8+）** —— CANN `.run` 包与 miniforge 均硬编码为 `linux-aarch64`。自动安装系统依赖库（`libnuma1`/`libgomp1`/`libssl-dev`）假设 **Debian/Ubuntu 系（apt）**发行版；非 apt 系发行版需手动安装这些库。
+**系统要求**：Linux **aarch64（arm64v8+）** 或 **x86_64**。`install.sh` 通过 `uname -m` 自动识别本机 CPU 架构，下载对应的 CANN `.run` 包与 miniforge 安装器（可用 `ARCH=aarch64|x86_64` 覆盖）。自动安装系统依赖库（`libnuma1`/`libgomp1`/`libssl-dev`）假设 **Debian/Ubuntu 系（apt）**发行版；非 apt 系发行版需手动安装这些库。
+
+运行结果按本机架构打标签，两个平台互不覆盖：aarch64 沿用原始无后缀文件名（`RESULT.md`、`reports/INDEX.md`），其他架构带后缀（如 `RESULT.x86_64.md`、`reports/INDEX.x86_64.md`）。CAModel 的确定性指标（指令数、执行耗时 ns）与宿主机无关——同一 kernel 在不同架构上应当一致；宿主 CPU 只影响仿真器自身的墙钟速度。
 
 环境由本目录的 [`install.sh`](install.sh) 搭建：把 CANN Toolkit + cannsim CLI 装进独立 conda env `cannsim`（仅 toolkit，**无 NPU 驱动** —— 纯无卡仿真）：
 
@@ -15,12 +17,13 @@
 - `./install.sh test-all` —— 测试 + **全量重跑所有单元**（`run_all.sh`）。
 - `./install.sh uninstall` —— 删除 conda env（保留 miniforge 与已下载的 `.run`）。
 
-环境变量开关：`ENV_NAME`（默认 `cannsim`）、`PY_VER`、`MINIFORGE_DIR`、`SKIP_REAL_SIM=1`（跳过真实算子仿真）、`RUN_ALL=1`（`test` 时跑全量）。真实算子仿真复用 `harness/run_one.sh examples/ascendc/vector/add`，该脚本自包含（自动 source conda + set_env，构建、record、校验）。
+环境变量开关：`ARCH`（默认 `uname -m`）、`ENV_NAME`（默认 `cannsim`）、`PY_VER`、`MINIFORGE_DIR`、`SKIP_REAL_SIM=1`（跳过真实算子仿真）、`RUN_ALL=1`（`test` 时跑全量）。真实算子仿真复用 `harness/run_one.sh examples/ascendc/vector/add`，该脚本自包含（自动 source conda + set_env，构建、record、校验）。
 
 ## 当前状态：**84/84 仿真通过** ✅（含 23 个高阶数学算子 + 带 Tiling 算子 SoftMax/LogSoftmax/RmsNorm/LayerNorm/GroupNorm/DeepNorm/BatchNorm/Matmul/TopK/Broadcast + Transpose/Sort/Pad + 数据重排 Duplicate/Gather/Scatter/CreateVecIndex/Brcb + 计算 Axpy/MulCast/Compare/GatherMask + 原子 AtomicAdd + 标量 ScalarCast + 多核同步 SyncAll/IBSet/IBWait + half 变体 AddHalf/CastF2H）
 
-总表（指令数/耗时/报告链接）：[`reports/INDEX.md`](reports/INDEX.md)
+总表（指令数/耗时/报告链接）：[`reports/INDEX.md`](reports/INDEX.md)（aarch64）· [`reports/INDEX.x86_64.md`](reports/INDEX.x86_64.md)（x86_64）
 性能分析（指令数/耗时横向对比 + 洞察）：[`reports/PERF.zh-CN.md`](reports/PERF.zh-CN.md)
+跨架构对比（aarch64 vs x86_64）：[`reports/PERF.x86_64.md`](reports/PERF.x86_64.md)
 API 文档索引：[`docs_zh-CN/INDEX.md`](docs_zh-CN/INDEX.md)
 
 覆盖的 arity 家族（9 类）：
