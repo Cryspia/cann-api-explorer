@@ -1,0 +1,18 @@
+{
+  "name": "Power",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "binary_act",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "POWER",
+  "inputs": {
+    "x": 2.0,
+    "y": 3.0
+  },
+  "expect": 8.0,
+  "doc_url": "",
+  "pass_marker": "POWER SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/power"
+}

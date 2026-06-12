@@ -1,0 +1,17 @@
+{
+  "name": "Frac",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "FRAC",
+  "inputs": {
+    "x": 2.75
+  },
+  "expect": 0.75,
+  "doc_url": "",
+  "pass_marker": "FRAC SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/frac"
+}

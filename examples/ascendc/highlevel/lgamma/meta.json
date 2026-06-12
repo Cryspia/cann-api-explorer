@@ -1,0 +1,17 @@
+{
+  "name": "Lgamma",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "LGAMMA",
+  "inputs": {
+    "x": 1.0
+  },
+  "expect": 0.0,
+  "doc_url": "",
+  "pass_marker": "LGAMMA SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/lgamma"
+}

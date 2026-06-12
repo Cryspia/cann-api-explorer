@@ -1,0 +1,16 @@
+{
+  "name": "DataCopy",
+  "lib": "ascendc",
+  "category": "datacopy",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "DATACOPY",
+  "inputs": {"x": 7.0},
+  "expect": 7.0,
+  "doc_url": "",
+  "pass_marker": "DATACOPY SIMULATION PASSED",
+  "dir": "examples/ascendc/datacopy/datacopy",
+  "note": "Pure-copy identity: DataCopy GM->Local->Local->GM, z==x. Highlights DataCopy itself."
+}

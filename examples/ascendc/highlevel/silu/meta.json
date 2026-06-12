@@ -1,0 +1,17 @@
+{
+  "name": "Silu",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SILU",
+  "inputs": {
+    "x": 1.0
+  },
+  "expect": 0.7310586,
+  "doc_url": "",
+  "pass_marker": "SILU SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/silu"
+}

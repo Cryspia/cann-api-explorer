@@ -1,0 +1,16 @@
+{
+  "name": "IBSetWait",
+  "lib": "ascendc",
+  "category": "sync",
+  "arity": "manual",
+  "dtype": "int32",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "IBSETWAIT",
+  "inputs": {"blockDim": 8, "chain": "i waits for i-1, then chain[i]=chain[i-1]+1"},
+  "expect": "chain[i]=i+1 (core 7=8)",
+  "doc_url": "",
+  "pass_marker": "IBSETWAIT SIMULATION PASSED",
+  "dir": "examples/ascendc/sync/ibsetwait",
+  "note": "IBSet/IBWait one-to-one cross-core flag (finer than SyncAll). Same GM slot [blockNum*8*eid+slot*8]: IBSet sets 1, IBWait waits for 1 then clears to 0. Chained 0->1->..->7 accumulation verifies strict ordering."
+}

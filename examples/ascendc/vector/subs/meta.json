@@ -1,0 +1,18 @@
+{
+  "name": "Subs",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "scalar",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SUBS",
+  "inputs": {
+    "x": 5.0,
+    "s": 2.0
+  },
+  "expect": 3.0,
+  "doc_url": "",
+  "pass_marker": "SUBS SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/subs"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "GroupNorm",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "GROUPNORM",
+  "inputs": {"shape": "[N=1,C=4,HW=16] G=2,D=2", "x": 5.0, "gamma": 1.0, "beta": 0.0, "eps": 1e-5},
+  "expect": 0.0,
+  "doc_url": "",
+  "pass_marker": "GROUPNORM SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/groupnorm",
+  "note": "With GroupNormTiling. The 3510 impl directly uses n/g/d/hw/factor, dhwAlignSize selects the branch, oneTmpSize only needs to be >0. factor=1/(D*HW). All-equal within a group -> var=0 -> output=beta=0."
+}

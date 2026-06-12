@@ -1,0 +1,17 @@
+{
+  "name": "Ceil",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "CEIL",
+  "inputs": {
+    "x": 2.3
+  },
+  "expect": 3.0,
+  "doc_url": "",
+  "pass_marker": "CEIL SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/ceil"
+}

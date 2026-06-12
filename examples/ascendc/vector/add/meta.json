@@ -1,0 +1,18 @@
+{
+  "name": "Add",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "binary",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "ADD",
+  "inputs": {
+    "x": 1.0,
+    "y": 2.0
+  },
+  "expect": 3.0,
+  "doc_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910beta1/API/ascendcopapi/atlasascendc_api_07_0021.html",
+  "pass_marker": "ADD SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/add"
+}

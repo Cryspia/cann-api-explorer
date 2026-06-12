@@ -1,0 +1,17 @@
+{
+  "name": "Erfc",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "ERFC",
+  "inputs": {
+    "x": 0.0
+  },
+  "expect": 1.0,
+  "doc_url": "",
+  "pass_marker": "ERFC SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/erfc"
+}

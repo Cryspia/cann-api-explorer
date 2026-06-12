@@ -1,0 +1,18 @@
+{
+  "name": "Mins",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "scalar",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "MINS",
+  "inputs": {
+    "x": 1.0,
+    "s": 2.0
+  },
+  "expect": 1.0,
+  "doc_url": "",
+  "pass_marker": "MINS SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/mins"
+}

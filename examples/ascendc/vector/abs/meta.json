@@ -1,0 +1,17 @@
+{
+  "name": "Abs",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "unary",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "ABS",
+  "inputs": {
+    "x": -3.0
+  },
+  "expect": 3.0,
+  "doc_url": "",
+  "pass_marker": "ABS SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/abs"
+}

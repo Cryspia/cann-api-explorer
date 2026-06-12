@@ -1,0 +1,17 @@
+{
+  "name": "Rsqrt",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "unary",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "RSQRT",
+  "inputs": {
+    "x": 4.0
+  },
+  "expect": 0.5,
+  "doc_url": "",
+  "pass_marker": "RSQRT SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/rsqrt"
+}

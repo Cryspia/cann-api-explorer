@@ -1,0 +1,16 @@
+{
+  "name": "SoftMax",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SOFTMAX",
+  "inputs": {"shape": "[8,64]", "x": 1.0},
+  "expect": 0.015625,
+  "doc_url": "",
+  "pass_marker": "SOFTMAX SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/softmax",
+  "note": "High-level operator with Tiling. Uses device-side SoftMaxTilingFunc to construct SoftMaxTiling inside the kernel, avoiding the host tiling framework. All-1 input -> each element 1/64."
+}

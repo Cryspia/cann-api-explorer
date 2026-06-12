@@ -1,0 +1,16 @@
+{
+  "name": "LayerNorm",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "LAYERNORM",
+  "inputs": {"shape": "[8,64]", "x": 3.0, "gamma": 1.0, "beta": 0.0, "eps": 1e-5},
+  "expect": 0.0,
+  "doc_url": "",
+  "pass_marker": "LAYERNORM SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/layernorm",
+  "note": "With Tiling. This arch=3510 takes the regbase path, using the LayerNorm(Para, LayerNormSeparateTiling) API. rLength=64<=sregLower simple branch needs only a few hand-filled fields (k2Rec=1/R). x all-equal -> mean=x, var=0 -> output=beta=0."
+}

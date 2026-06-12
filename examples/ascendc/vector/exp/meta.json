@@ -1,0 +1,17 @@
+{
+  "name": "Exp",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "unary",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "EXP",
+  "inputs": {
+    "x": 0.0
+  },
+  "expect": 1.0,
+  "doc_url": "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910beta1/API/ascendcopapi/atlasascendc_api_07_0024.html",
+  "pass_marker": "EXP SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/exp"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Not",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "bitun",
+  "dtype": "int16_t",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "NOT",
+  "inputs": {
+    "x": 0
+  },
+  "expect": -1,
+  "doc_url": "",
+  "pass_marker": "NOT SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/not"
+}

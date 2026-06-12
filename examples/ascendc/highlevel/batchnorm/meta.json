@@ -1,0 +1,16 @@
+{
+  "name": "BatchNorm",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "BATCHNORM",
+  "inputs": {"shape": "[B=4,F=8]", "x": 5.0, "gamma": 1.0, "beta": 2.0, "eps": 1e-5},
+  "expect": "output=2, mean=5",
+  "doc_url": "",
+  "pass_marker": "BATCHNORM SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/batchnorm",
+  "note": "output=gamma*(x-mean)*rsqrt(var+eps)+beta, mean along first dim B. The 3510 only reads originalBLength/meanVarSize/firstDimValueBack(=1/B). Layout [B,F]. x all-equal -> var=0 -> output=beta=2."
+}

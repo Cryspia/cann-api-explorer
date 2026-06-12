@@ -1,0 +1,16 @@
+{
+  "name": "SyncAll",
+  "lib": "ascendc",
+  "category": "sync",
+  "arity": "manual",
+  "dtype": "int32",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SYNCALL",
+  "inputs": {"blockDim": 8, "flag[idx]": "idx+1"},
+  "expect": "result[i]=36 (1+..+8)",
+  "doc_url": "",
+  "pass_marker": "SYNCALL SIMULATION PASSED",
+  "dir": "examples/ascendc/sync/syncall",
+  "note": "Multi-core barrier. 8 cores each write idx+1 -> SyncAll(gmWorkspace,ubWorkspace,usedCores) software barrier -> each core reads all and sums=36. Verifies multi-core launch + inter-core sync."
+}

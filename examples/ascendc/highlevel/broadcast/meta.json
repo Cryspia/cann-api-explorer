@@ -1,0 +1,16 @@
+{
+  "name": "Broadcast",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "BROADCAST",
+  "inputs": {"src_shape": "[1,8]", "dst_shape": "[4,8]", "axis": 0, "src": "[0..7]"},
+  "expect": "each row=0..7",
+  "doc_url": "",
+  "pass_marker": "BROADCAST SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/broadcast",
+  "note": "3510 device-side GetBroadcastTilingInfo computes BroadcastTiling, then Broadcast(...,&tiling). tmp uses PopStackBuffer internally. Replicates [1,N] into [M,N] along axis 0."
+}

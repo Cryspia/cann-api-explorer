@@ -1,0 +1,8 @@
+{
+  "name": "TopK", "lib": "ascendc", "category": "highlevel", "arity": "manual",
+  "dtype": "float", "soc_build": "Ascend950PR_9599", "soc_run": "Ascend950",
+  "tag": "TOPK", "inputs": {"n": 32, "k": 4, "src": "0..31"}, "expect": "val=[31,30,29,28] idx=[31,30,29,28]",
+  "doc_url": "", "pass_marker": "TOPK SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/topk",
+  "note": "Host TopKTilingFunc computes TopkTiling -> passed via GM; kernel TopK<float,isInitIndex=true,TOPK_NORMAL>. Links libtiling_api.a+libplatform.so."
+}

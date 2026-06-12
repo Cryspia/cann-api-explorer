@@ -1,0 +1,8 @@
+{
+  "name": "Sort", "lib": "ascendc", "category": "highlevel", "arity": "manual",
+  "dtype": "float", "soc_build": "Ascend950PR_9599", "soc_run": "Ascend950",
+  "tag": "SORT", "inputs": {"n": 32, "src": "0..31"}, "expect": "descending dst=[31..0] idx=[31..0]",
+  "doc_url": "", "pass_marker": "SORT SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/sort",
+  "note": "Tiling-free Sort<float,uint32_t>(dst,dstIdx,src,srcIdx,tmp,count), descending, 32 elements per region."
+}

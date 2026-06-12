@@ -1,0 +1,16 @@
+{
+  "name": "Conv3D",
+  "lib": "ascendc",
+  "category": "cube",
+  "arity": "manual",
+  "dtype": "half",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "CONV3D",
+  "inputs": {"shape": "N=1,Cin=16,Cout=16,1x1x1,D=H=W=1", "fmap": 1.0, "weight": 0.5},
+  "expect": "output=8.0 (16*1*0.5)",
+  "doc_url": "",
+  "pass_marker": "CONV3D SIMULATION PASSED",
+  "dir": "examples/ascendc/cube/conv3d",
+  "note": "Cube+host tiling. host Conv3dTiling.GetTiling(TConv3DApiTiling) -> GM -> kernel Conv3D object Init/SetInput/SetWeight/IterateAll. All-equal fmap/weight makes the output independent of the NDC1HWC0/FRACTAL_Z_3D layout."
+}

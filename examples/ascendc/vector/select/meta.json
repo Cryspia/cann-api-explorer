@@ -1,0 +1,16 @@
+{
+  "name": "Select",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SELECT",
+  "inputs": {"x": 1.0, "y": 2.0, "cmp": "x>0"},
+  "expect": 1.0,
+  "doc_url": "",
+  "pass_marker": "SELECT SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/select",
+  "note": "Hand-written: CompareScalar(x>0) -> all-true mask, Select(mask,x,y) -> picks x. Covers both CompareScalar + Select."
+}

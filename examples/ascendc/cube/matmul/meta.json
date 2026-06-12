@@ -1,0 +1,16 @@
+{
+  "name": "Matmul",
+  "lib": "ascendc",
+  "category": "cube",
+  "arity": "manual",
+  "dtype": "half→float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "MATMUL",
+  "inputs": {"shape": "M=N=K=64", "A": 1.0, "B": 1.0},
+  "expect": 64.0,
+  "doc_url": "",
+  "pass_marker": "MATMUL SIMULATION PASSED",
+  "dir": "examples/ascendc/cube/matmul",
+  "note": "Cube + TCubeTiling. Host-side matmul_tiling API computes tiling -> passed via GM -> kernel REGIST_MATMUL_OBJ + SetTensorA/B + IterateAll. A=B=1 -> C=K=64."
+}

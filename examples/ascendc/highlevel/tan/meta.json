@@ -1,0 +1,17 @@
+{
+  "name": "Tan",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "TAN",
+  "inputs": {
+    "x": 0.0
+  },
+  "expect": 0.0,
+  "doc_url": "",
+  "pass_marker": "TAN SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/tan"
+}

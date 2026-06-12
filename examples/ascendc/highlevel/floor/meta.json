@@ -1,0 +1,17 @@
+{
+  "name": "Floor",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "FLOOR",
+  "inputs": {
+    "x": 2.7
+  },
+  "expect": 2.0,
+  "doc_url": "",
+  "pass_marker": "FLOOR SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/floor"
+}

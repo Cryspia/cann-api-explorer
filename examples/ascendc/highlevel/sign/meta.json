@@ -1,0 +1,17 @@
+{
+  "name": "Sign",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SIGN",
+  "inputs": {
+    "x": 3.0
+  },
+  "expect": 1.0,
+  "doc_url": "",
+  "pass_marker": "SIGN SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/sign"
+}

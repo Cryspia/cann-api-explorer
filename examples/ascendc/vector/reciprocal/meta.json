@@ -1,0 +1,17 @@
+{
+  "name": "Reciprocal",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "unary",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "RECIPROCAL",
+  "inputs": {
+    "x": 4.0
+  },
+  "expect": 0.25,
+  "doc_url": "",
+  "pass_marker": "RECIPROCAL SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/reciprocal"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Sigmoid",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SIGMOID",
+  "inputs": {
+    "x": 1.0
+  },
+  "expect": 0.7310586,
+  "doc_url": "",
+  "pass_marker": "SIGMOID SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/sigmoid"
+}

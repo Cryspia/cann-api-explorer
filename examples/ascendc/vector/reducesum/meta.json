@@ -1,0 +1,17 @@
+{
+  "name": "ReduceSum",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "reduce",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "REDUCESUM",
+  "inputs": {
+    "x": 1.0
+  },
+  "expect": 256.0,
+  "doc_url": "",
+  "pass_marker": "REDUCESUM SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/reducesum"
+}

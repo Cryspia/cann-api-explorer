@@ -1,0 +1,16 @@
+{
+  "name": "Transpose",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "manual",
+  "dtype": "half",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "TRANSPOSE",
+  "inputs": {"shape": "16x16", "pattern": "src[r][c]=r*16+c"},
+  "expect": "dst[r][c]=c*16+r",
+  "doc_url": "",
+  "pass_marker": "TRANSPOSE SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/transpose",
+  "note": "Basic API Transpose<half>(dst,src) -> hardware vtranspose, 16x16 b16 block transpose."
+}

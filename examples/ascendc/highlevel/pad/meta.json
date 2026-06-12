@@ -1,0 +1,16 @@
+{
+  "name": "Pad",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "PAD",
+  "inputs": {"shape": "[H=1,W=16] srcOriWidth=12", "rightPad": 4, "padValue": 7, "src": "[1..16]"},
+  "expect": "dst[0..11]=src, dst[12..15]=7",
+  "doc_url": "",
+  "pass_marker": "PAD SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/pad",
+  "note": "With PadTiling; the 3510 impl only reads srcHeight/srcWidth/srcOriWidth + PadParams. Hand-fill 3 fields to avoid host tiling. AlignedPad path: srcWidth=16<64=CUBE_MAX_SIZE/4, the tail [srcOriWidth, srcOriWidth+rightPad) is filled with padValue."
+}

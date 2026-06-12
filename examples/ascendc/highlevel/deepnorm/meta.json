@@ -1,0 +1,16 @@
+{
+  "name": "DeepNorm",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "DEEPNORM",
+  "inputs": {"shape": "[B=1,S=1,H=8]", "x": 1.0, "gx": 0.0, "alpha": 2.0, "gamma": 1.0, "beta": 3.0, "eps": 1e-5},
+  "expect": "dst=3, mean=2",
+  "doc_url": "",
+  "pass_marker": "DEEPNORM SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/deepnorm",
+  "note": "y=LayerNorm(alpha*x+gx)*gamma+beta. The 3510 only reads bLength/sLength/hLength/originalHLength/oneTmpSize; the mean coefficient uses hLength internally. eff=2 all-equal -> var=0 -> dst=beta=3."
+}

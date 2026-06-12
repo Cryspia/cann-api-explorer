@@ -1,0 +1,90 @@
+# CANN API Explorer — full API inventory (project source of truth)
+# Each record is consumed by harness/gen.py to generate the examples/<lib>/<category>/<api>/ unit.
+# status: todo | doc | example | passed | failed | skip
+# arity:  unary | binary | scalar | reduce | compare | select | cast | datacopy | manual
+#
+# Compile with a unified SOC=Ascend950PR_9599 (= cannsim's -s Ascend950); dav_9201 is not compilable, see PLAN §7.
+
+defaults:
+  soc_build: Ascend950PR_9599
+  soc_run: Ascend950
+  run_mode: sim
+
+apis:
+  # ---- vector arithmetic (binary) ----
+  - {name: Add,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: doc,
+     doc_url: "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910beta1/API/ascendcopapi/atlasascendc_api_07_0021.html",
+     inputs: {x: 1.0, y: 2.0}, expect: 3.0}
+  - {name: Sub,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 5.0, y: 2.0}, expect: 3.0}
+  - {name: Mul,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 3.0, y: 2.0}, expect: 6.0}
+  - {name: Div,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 6.0, y: 2.0}, expect: 3.0}
+  - {name: Max,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 1.0, y: 2.0}, expect: 2.0}
+  - {name: Min,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 1.0, y: 2.0}, expect: 1.0}
+  # ---- vector-scalar (scalar; signature (dst,src,scalar,count) verified against the header) ----
+  - {name: Adds, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 1.0, s: 2.0}, expect: 3.0}
+  - {name: Muls, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 3.0, s: 2.0}, expect: 6.0}
+  - {name: Subs, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 5.0, s: 2.0}, expect: 3.0}
+  - {name: Divs, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 6.0, s: 2.0}, expect: 3.0}
+  - {name: Maxs, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 1.0, s: 2.0}, expect: 2.0}
+  - {name: Mins, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 1.0, s: 2.0}, expect: 1.0}
+  # ---- vector unary (unary) ----
+  - {name: Exp,  lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: doc,
+     doc_url: "https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/910beta1/API/ascendcopapi/atlasascendc_api_07_0024.html",
+     inputs: {x: 0.0}, expect: 1.0}
+  - {name: Abs,  lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: todo, inputs: {x: -3.0}, expect: 3.0}
+  - {name: Sqrt, lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: todo, inputs: {x: 4.0}, expect: 2.0}
+  - {name: Relu, lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: todo, inputs: {x: -1.0}, expect: 0.0}
+  - {name: Ln,   lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: todo, inputs: {x: 1.0}, expect: 0.0}
+  - {name: Neg,        lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: todo, inputs: {x: -3.0}, expect: 3.0}
+  - {name: Reciprocal, lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: todo, inputs: {x: 4.0}, expect: 0.25}
+  - {name: Rsqrt,      lib: ascendc, category: vector, arity: unary, dtypes: [half, float], status: todo, inputs: {x: 4.0}, expect: 0.5}
+  # ---- integer bitwise ops (bitbin/bitun, kdtype=int16_t) ----
+  - {name: And, lib: ascendc, category: vector, arity: bitbin, kdtype: int16_t, dtypes: [int16_t, uint16_t], status: todo, inputs: {x: 6, y: 3}, expect: 2}
+  - {name: Or,  lib: ascendc, category: vector, arity: bitbin, kdtype: int16_t, dtypes: [int16_t, uint16_t], status: todo, inputs: {x: 6, y: 3}, expect: 7}
+  - {name: Not, lib: ascendc, category: vector, arity: bitun,  kdtype: int16_t, dtypes: [int16_t, uint16_t], status: todo, inputs: {x: 0}, expect: -1}
+  # ---- type conversion (cast) ----
+  - {name: Cast, lib: ascendc, category: vector, arity: cast, dtypes: [float, int32_t], status: todo,
+     inputs: {x: 3.0}, expect: 3, src_dtype: float, dst_dtype: int32_t, round: CAST_RINT}
+  # ---- high-level math (adv_api/math; simple count tmp-free overload, uses the activation arity) ----
+  - {name: Sin,  lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/sin.h",  proto_header: "sin.h",  inputs: {x: 0.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Cos,  lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/cos.h",  proto_header: "cos.h",  inputs: {x: 0.0}, expect: 1.0,  tol: "5e-3"}
+  - {name: Tan,  lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/tan.h",  proto_header: "tan.h",  inputs: {x: 0.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Tanh, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/tanh.h", proto_header: "tanh.h", inputs: {x: 0.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Sinh, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/sinh.h", proto_header: "sinh.h", inputs: {x: 0.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Cosh, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/cosh.h", proto_header: "cosh.h", inputs: {x: 0.0}, expect: 1.0,  tol: "5e-3"}
+  - {name: Asin, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/asin.h", proto_header: "asin.h", inputs: {x: 0.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Acos, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/acos.h", proto_header: "acos.h", inputs: {x: 1.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Atan, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/atan.h", proto_header: "atan.h", inputs: {x: 0.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Erf,  lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/erf.h",  proto_header: "erf.h",  inputs: {x: 0.0}, expect: 0.0,  tol: "5e-3"}
+  - {name: Floor,lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/floor.h",proto_header: "floor.h",inputs: {x: 2.7}, expect: 2.0,  tol: "1e-3"}
+  - {name: Ceil, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/ceil.h", proto_header: "ceil.h", inputs: {x: 2.3}, expect: 3.0,  tol: "1e-3"}
+  - {name: Round,lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/round.h",proto_header: "round.h",inputs: {x: 2.4}, expect: 2.0,  tol: "1e-3"}
+  - {name: Trunc,lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/trunc.h",proto_header: "trunc.h",inputs: {x: 2.7}, expect: 2.0,  tol: "1e-3"}
+  - {name: Sign, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/sign.h", proto_header: "sign.h", inputs: {x: 3.0}, expect: 1.0,  tol: "1e-3"}
+  - {name: Frac, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/frac.h", proto_header: "frac.h", inputs: {x: 2.75}, expect: 0.75, tol: "5e-3"}
+  - {name: Erfc, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/erfc.h", proto_header: "erfc.h", inputs: {x: 0.0}, expect: 1.0, tol: "5e-3"}
+  - {name: Rint, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/rint.h", proto_header: "rint.h", inputs: {x: 2.4}, expect: 2.0, tol: "1e-3"}
+  - {name: Log,    lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/log.h",    proto_header: "log.h",    inputs: {x: 1.0}, expect: 0.0, tol: "5e-3"}
+  - {name: Lgamma, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/lgamma.h", proto_header: "lgamma.h", inputs: {x: 1.0}, expect: 0.0, tol: "5e-3"}
+  # ---- binary high-level math (binary_act) ----
+  - {name: Power, lib: ascendc, category: highlevel, arity: binary_act, dtypes: [half, float], status: todo, include: "lib/math/power.h", proto_header: "power.h", inputs: {x: 2.0, y: 3.0}, expect: 8.0, tol: "5e-3"}
+  - {name: Fmod,  lib: ascendc, category: highlevel, arity: binary_act, dtypes: [half, float], status: todo, include: "lib/math/fmod.h",  proto_header: "fmod.h",  inputs: {x: 7.0, y: 3.0}, expect: 1.0, tol: "5e-3"}
+  - {name: Hypot, lib: ascendc, category: highlevel, arity: binary_act, dtypes: [half, float], status: todo, include: "lib/math/hypot.h", proto_header: "hypot.h", inputs: {x: 3.0, y: 4.0}, expect: 5.0, tol: "5e-3"}
+
+  # ---- reduction (reduce; single-core 256-element reduction to dst[0]) ----
+  - {name: ReduceSum, lib: ascendc, category: vector, arity: reduce, dtypes: [half, float], status: todo, inputs: {x: 1.0}, expect: 256.0}
+  - {name: ReduceMax, lib: ascendc, category: vector, arity: reduce, dtypes: [half, float], status: todo, inputs: {x: 1.0}, expect: 1.0}
+  - {name: ReduceMin, lib: ascendc, category: vector, arity: reduce, dtypes: [half, float], status: todo, inputs: {x: 1.0}, expect: 1.0}
+  # ---- high-level activation (activation; adv_api simple count mode, auto-generated) ----
+  - {name: Sigmoid, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo,
+     include: "lib/activation/sigmoid.h", proto_header: "sigmoid.h", inputs: {x: 1.0}, expect: 0.7310586, tol: "5e-3"}
+  - {name: Gelu, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo,
+     include: "lib/activation/gelu.h", proto_header: "gelu.h", inputs: {x: 1.0}, expect: 0.8413447, tol: "1e-2"}
+  - {name: Silu, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo,
+     include: "lib/activation/silu.h", proto_header: "silu.h", inputs: {x: 1.0}, expect: 0.7310586, tol: "5e-3"}
+  - {name: Swish, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo,
+     include: "lib/activation/swish.h", proto_header: "swish.h", inputs: {x: 1.0}, expect: 0.7310586, tol: "5e-3", extra_args: ", (DT)1.0"}
+  # ---- high-level (hand-written) ----
+  - {name: Matmul,   lib: ascendc, category: cube,      arity: manual, dtypes: [half], status: todo}
+  - {name: LayerNorm,lib: ascendc, category: highlevel, arity: manual, dtypes: [half, float], status: todo}
+  - {name: Softmax,  lib: ascendc, category: highlevel, arity: manual, dtypes: [half, float], status: todo}

@@ -1,0 +1,17 @@
+{
+  "name": "Neg",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "unary",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "NEG",
+  "inputs": {
+    "x": -3.0
+  },
+  "expect": 3.0,
+  "doc_url": "",
+  "pass_marker": "NEG SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/neg"
+}

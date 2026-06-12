@@ -1,0 +1,16 @@
+{
+  "name": "LogSoftmax",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "LOGSOFTMAX",
+  "inputs": {"shape": "[M=8,K=64]", "x": 0.0},
+  "expect": "dst=log(1/64)=-ln(64)≈-4.158883",
+  "doc_url": "",
+  "pass_marker": "LOGSOFTMAX SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/logsoftmax",
+  "note": "LogSoftMaxTiling shares the same layout as SoftMaxTiling; the kernel reuses device SoftMaxTilingFunc to fill it then copies field by field into LogSoftMaxTiling, avoiding host tiling. x all-0 -> logsoftmax=-ln(K)."
+}
