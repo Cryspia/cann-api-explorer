@@ -1,0 +1,16 @@
+{
+  "name": "CumSum",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "CUMSUM",
+  "inputs": {"shape": "[16,16]", "src": 1.0},
+  "expect": "each output row = [1,2,...,16]; lastRow = [1,2,...,16]",
+  "doc_url": "",
+  "pass_marker": "CUMSUM SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/cumsum",
+  "note": "adv_api/math CumSum(dst, lastRow, src, tmp, CumSumInfo{outter,inner}): last-axis prefix sum. Default config also emits the prefix sum of the final row into lastRow. Shape [16,16] satisfies the 16-alignment needed by the device-side transpose path."
+}

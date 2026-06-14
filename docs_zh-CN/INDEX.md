@@ -11,7 +11,7 @@
 
 ## A 线 · Ascend C 核函数 API(可 cannsim 仿真)
 
-### 矢量计算 vector/ —— ✅ 41/41 仿真通过
+### 矢量计算 vector/ —— ✅ 56/56 仿真通过
 binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,count)`;
 本批 example 统一用 float、8 核、double buffer、SOC 构建 `Ascend950PR_9599` / 仿真 `Ascend950`。
 
@@ -58,8 +58,23 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 | AtomicAdd | GM 原子累加(8核→8) | [doc](../examples/ascendc/vector/atomicadd/doc.zh-CN.md) | ✅ |
 | AddHalf | Add 的 half 变体 | [doc](../examples/ascendc/vector/add_half/doc.zh-CN.md) | ✅ |
 | CastF2H | Cast float→half | [doc](../examples/ascendc/vector/castf2h/doc.zh-CN.md) | ✅ |
+| PRelu | 参数化 ReLU，x>0?x:a*x（逐元素斜率） | [doc](../examples/ascendc/vector/prelu/doc.zh-CN.md) | ✅ |
+| LeakyRelu | 带泄漏 ReLU，x>0?x:alpha*x（标量斜率） | [doc](../examples/ascendc/vector/leakyrelu/doc.zh-CN.md) | ✅ |
+| ShiftLeft | 按位左移(dst=src0<<src1) | [doc](../examples/ascendc/vector/shiftleft/doc.zh-CN.md) | ✅ |
+| ShiftRight | 按位右移(dst=src0>>src1) | [doc](../examples/ascendc/vector/shiftright/doc.zh-CN.md) | ✅ |
+| Ands | 与标量按位与(dst=src&scalar) | [doc](../examples/ascendc/vector/ands/doc.zh-CN.md) | ✅ |
+| Ors | 与标量按位或(dst=src|scalar) | [doc](../examples/ascendc/vector/ors/doc.zh-CN.md) | ✅ |
+| AddRelu | 融合 relu(src0+src1) | [doc](../examples/ascendc/vector/addrelu/doc.zh-CN.md) | ✅ |
+| SubRelu | 融合 relu(src0-src1) | [doc](../examples/ascendc/vector/subrelu/doc.zh-CN.md) | ✅ |
+| MulsCast | 乘标量+类型转换 | [doc](../examples/ascendc/vector/mulscast/doc.zh-CN.md) | ✅ |
+| FusedMulAdd | 融合 dst=dst*src0+src1（原地乘加） | [doc](../examples/ascendc/vector/fusedmuladd/doc.zh-CN.md) | ✅ |
+| MulAddDst | 融合 dst=dst+src0*src1 | [doc](../examples/ascendc/vector/muladddst/doc.zh-CN.md) | ✅ |
+| MulAddRelu | 融合 relu(dst+src0*src1) | [doc](../examples/ascendc/vector/muladdrelu/doc.zh-CN.md) | ✅ |
+| AbsSub | 融合 abs(src0-src1) | [doc](../examples/ascendc/vector/abssub/doc.zh-CN.md) | ✅ |
+| ExpSub | 融合 exp(src0-src1) | [doc](../examples/ascendc/vector/expsub/doc.zh-CN.md) | ✅ |
+| Mull | 整数乘低半部 | [doc](../examples/ascendc/vector/mull/doc.zh-CN.md) | ✅ |
 
-矢量类 **41/41 通过**，覆盖 binary/unary/scalar/cast/reduce/bitbin/bitun + 手写掩码(Compare/CompareScalar+Select) + Transpose + 数据重排(Duplicate/CreateVecIndex/Gather/Scatter/Brcb) + 融合(Axpy/MulCast) + 原子(AtomicAdd)。
+矢量类 **56/56 通过**，覆盖 binary/unary/scalar/cast/reduce/bitbin/bitun + 手写掩码(Compare/CompareScalar+Select) + Transpose + 数据重排(Duplicate/CreateVecIndex/Gather/Scatter/Brcb) + 融合(Axpy/MulCast/FusedMulAdd/MulAddDst/MulAddRelu/AddRelu/SubRelu/AbsSub/ExpSub) + 激活变体(PRelu/LeakyRelu) + 标量/位运算(ShiftLeft/ShiftRight/Ands/Ors/MulsCast/Mull) + 原子(AtomicAdd)。
 
 ### 标量计算 scalar/ —— ✅ 1/1 仿真通过
 
@@ -76,7 +91,7 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 
 > 标量 / 搬运 / 内存资源类的其余 API（ScalarCast、Copy、TPipe/TQue/TBuf/TBufPool 等）见下文「A 线未覆盖 API 清单」统一记录。
 
-### 高阶 API highlevel/ —— ✅ 38/38 仿真通过（4 激活 + 23 数学 + 6 归一化 + TopK/Sort/Pad/Broadcast + LogSoftmax）
+### 高阶 API highlevel/ —— ✅ 57/57 仿真通过（5 激活 + 28 数学 + 6 归一化 + 7 逻辑/比较 + 6 逐元素/工具 + TopK/Sort/Pad/Broadcast + LogSoftmax）
 
 **激活类**（简单 `(dst,src,count)`，免 Tiling，`#include "lib/activation/<op>.h"`）:
 
@@ -86,11 +101,36 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 | Gelu | activation | [doc](../examples/ascendc/highlevel/gelu/doc.zh-CN.md) | ✅ |
 | Silu | activation | [doc](../examples/ascendc/highlevel/silu/doc.zh-CN.md) | ✅ |
 | Swish | activation | [doc](../examples/ascendc/highlevel/swish/doc.zh-CN.md) | ✅ |
+| GeGLU | 门控 GLU 激活，gelu(a)*b | [doc](../examples/ascendc/highlevel/geglu/doc.zh-CN.md) | ✅ |
 
-**高阶数学类** adv_api/math（免 tmp `(dst,src,count)` / `(dst,src0,src1,count)` 重载,`#include "lib/math/<op>.h"`）—— ✅ 21/21:
-- 一元(activation arity, 20)：Sin/Cos/Tan/Tanh/Sinh/Cosh/Asin/Acos/Atan/Erf/Erfc/Floor/Ceil/Round/Rint/Trunc/Sign/Frac/Log/Lgamma
+**高阶数学类** adv_api/math（免 tmp `(dst,src,count)` / `(dst,src0,src1,count)` 重载,`#include "lib/math/<op>.h"`）—— ✅ 25/25:
+- 一元(activation arity, 24)：Sin/Cos/Tan/Tanh/Sinh/Cosh/Asin/Acos/Atan/Asinh/Acosh/Atanh/Erf/Erfc/Floor/Ceil/Round/Rint/Trunc/Sign/Frac/Log/Lgamma/Digamma
 - 二元(binary_act arity, 3)：Power(2³=8)/Fmod(7%3=1)/Hypot(3,4=5)
-（各单元 doc 见 `examples/ascendc/highlevel/<op>/doc.md`）。
+- 双输出(1)：SinCos（单 src → 同时输出 sin 与 cos）
+（Asinh=反双曲正弦，Acosh=反双曲余弦，Atanh=反双曲正切，Digamma=ψ(x) 即 Γ 的对数导数；各单元 doc 见 `examples/ascendc/highlevel/<op>/doc.zh-CN.md`）。
+
+**逻辑 / 比较类**（布尔输出逐元素，`#include "lib/math/<op>.h"`）—— ✅ 7/7:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| LogicalAnd | 逻辑与(bool 输出) | [doc](../examples/ascendc/highlevel/logical_and/doc.zh-CN.md) | ✅ |
+| LogicalOr | 逻辑或(bool 输出) | [doc](../examples/ascendc/highlevel/logical_or/doc.zh-CN.md) | ✅ |
+| LogicalXor | 逻辑异或(bool 输出) | [doc](../examples/ascendc/highlevel/logical_xor/doc.zh-CN.md) | ✅ |
+| LogicalNot | 逻辑非(bool 输出) | [doc](../examples/ascendc/highlevel/logical_not/doc.zh-CN.md) | ✅ |
+| IsNan | NaN 判定(bool 输出) | [doc](../examples/ascendc/highlevel/is_nan/doc.zh-CN.md) | ✅ |
+| IsInf | Inf 判定(bool 输出) | [doc](../examples/ascendc/highlevel/is_inf/doc.zh-CN.md) | ✅ |
+| IsFinite | 有限值判定(bool 输出) | [doc](../examples/ascendc/highlevel/is_finite/doc.zh-CN.md) | ✅ |
+
+**逐元素 / 工具类** —— ✅ 6/6:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| Fma | 融合乘加 a*b+c | [doc](../examples/ascendc/highlevel/fma/doc.zh-CN.md) | ✅ |
+| Xor | 按位异或 | [doc](../examples/ascendc/highlevel/xor/doc.zh-CN.md) | ✅ |
+| ClampMax | 钳位上界(与标量取 min) | [doc](../examples/ascendc/highlevel/clampmax/doc.zh-CN.md) | ✅ |
+| ClampMin | 钳位下界(与标量取 max) | [doc](../examples/ascendc/highlevel/clampmin/doc.zh-CN.md) | ✅ |
+| Where | 条件选择(mask?a:b) | [doc](../examples/ascendc/highlevel/where/doc.zh-CN.md) | ✅ |
+| CumSum | 前缀和(沿轴累加) | [doc](../examples/ascendc/highlevel/cumsum/doc.zh-CN.md) | ✅ |
 
 **带 Tiling 的归一化类**（突破点:两种 kernel 内 tiling 技术,免 host tiling 框架）:
 
@@ -124,10 +164,12 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 
 ### A 线 API 覆盖收尾（已补做 / 已查明不可用 / 仍未覆盖）
 
-已覆盖 **82** 个单元。下表交代曾在「未覆盖清单」里、本轮逐一处置的结果。
+已覆盖 **116** 个单元。下表交代曾在「未覆盖清单」里、本轮逐一处置的结果。
 
 **① 已补做成单元（✅，见上文各段）**
 Compare、GatherMask、Axpy、MulCast（矢量计算）；AtomicAdd（原子）；ScalarCast（标量）。
+新增融合 / 标量 / 位运算（矢量计算）：PRelu、LeakyRelu、ShiftLeft、ShiftRight、Ands、Ors、AddRelu、SubRelu、MulsCast、FusedMulAdd、MulAddDst、MulAddRelu、AbsSub、ExpSub、Mull。
+新增高阶算子：Acosh、Asinh、Atanh、Digamma、SinCos、GeGLU、ClampMax、ClampMin、Fma、Xor、LogicalAnd、LogicalOr、LogicalXor、LogicalNot、IsNan、IsInf、IsFinite、Where、CumSum。
 
 **② 已尝试、查明本环境不可用（🚫，代码/反例留存，meta.json.unsupported 不计入通过数）**
 | API | 头 | 查明结论 |
@@ -140,7 +182,9 @@ Compare、GatherMask、Axpy、MulCast（矢量计算）；AtomicAdd（原子）�
 **③ 仍未覆盖（与已覆盖项同质 / 需特殊参数 / 辅助设施，按需补）**
 | API | 头 | 不补原因 |
 |-----|----|---------|
-| Cast 变体（CastDequant/CastDeq/AddReluCast） | vec_vconv | 量化转换需 deqScale 参数；基础 Cast 已覆盖转换语义 |
+| 量化转换/融合（CastDequant/CastDeq/AddReluCast/AddDeqRelu） | vec_vconv | 量化转换需 deqScale 参数；基础 Cast + 普通 AddRelu 已覆盖非量化语义 |
+| FusedMulsCast | vec_vconv | 乘标量+量化转换变体；普通 MulsCast 已覆盖非量化形态 |
+| Philox 随机生成 | rand | key/counter 伪随机生成，无可对照的参考数值输出 |
 | BilinearInterpolation | vec_bilinearinterpolation | 参数巨多（offset/hRepeat/vRepeat/tmp），无 count 简化模式 |
 | Gemm（GetGemmTiling） | gemm | 与 Matmul 同属 Cube+host-tiling，已由 Matmul 代表 |
 | Fixpipe | fixpipe | Cube 结果搬运，Matmul 内部隐式使用 |
@@ -156,7 +200,7 @@ Compare、GatherMask、Axpy、MulCast（矢量计算）；AtomicAdd（原子）�
 
 ## B 线 · Runtime / AscendCL host API(host 执行,不产指令仿真报告)
 
-已系统记录：[`runtime/host_api.md`](runtime/host_api.md) —— 盘点自 85 个单元 main.cpp 的全部 host API（13 个 acl* + ACLRT_LAUNCH_KERNEL + platform），含标准调用序列与分组说明（初始化/设备/Stream/内存/核函数发射/平台 tiling）。这些 API 是发射核函数的脚手架，不产 CAModel 报告，其"验证"已隐含在 82 个 PASSED 单元中。
+已系统记录：[`runtime/host_api.md`](runtime/host_api.md) —— 盘点自各单元 main.cpp 的全部 host API（13 个 acl* + ACLRT_LAUNCH_KERNEL + platform），含标准调用序列与分组说明（初始化/设备/Stream/内存/核函数发射/平台 tiling）。这些 API 是发射核函数的脚手架，不产 CAModel 报告，其"验证"已隐含在 **118 个 PASSED** 单元中。
 
 ## C 线 · 不覆盖(需真实驱动/多卡/专用硬件)
 GE 图引擎、算子库 aolapi、HCCL、HIXL、ATB、SiP、DVPP —— 逐库的「为何不覆盖 + 将来覆盖条件」见 [`notcovered.md`](notcovered.md)。

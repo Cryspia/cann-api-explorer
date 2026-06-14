@@ -1,0 +1,15 @@
+{
+  "name": "LogicalOr",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "logical",
+  "dtype": "float->bool",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "LOGICAL_OR",
+  "inputs": { "src0": 1.0, "src1": 0.0 },
+  "expect": 1,
+  "doc_url": "",
+  "pass_marker": "LOGICAL_OR SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/logical_or"
+}

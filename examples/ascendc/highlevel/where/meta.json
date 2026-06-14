@@ -1,0 +1,16 @@
+{
+  "name": "Where",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "WHERE",
+  "inputs": {"src0": 1.0, "src1": 2.0, "condition": "i even -> true"},
+  "expect": "dst[i] = (i even) ? 1.0 : 2.0",
+  "doc_url": "",
+  "pass_marker": "WHERE SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/where",
+  "note": "adv_api/math Where(dst, src0, src1, condition, count): element-wise dst=condition?src0:src1. condition is a bool LocalTensor. Tensor/tensor branch verified with an alternating condition."
+}

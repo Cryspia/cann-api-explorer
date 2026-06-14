@@ -1,0 +1,15 @@
+{
+  "name": "IsFinite",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "check",
+  "dtype": "float->bool",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "IS_FINITE",
+  "inputs": { "src": 1.0 },
+  "expect": 1,
+  "doc_url": "",
+  "pass_marker": "IS_FINITE SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/is_finite"
+}

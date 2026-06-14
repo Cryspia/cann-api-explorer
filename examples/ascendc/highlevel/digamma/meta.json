@@ -1,0 +1,17 @@
+{
+  "name": "Digamma",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "DIGAMMA",
+  "inputs": {
+    "x": 1.0
+  },
+  "expect": -0.5772157,
+  "doc_url": "",
+  "pass_marker": "DIGAMMA SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/digamma"
+}

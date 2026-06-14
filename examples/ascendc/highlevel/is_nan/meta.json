@@ -1,0 +1,15 @@
+{
+  "name": "IsNan",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "check",
+  "dtype": "float->bool",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "IS_NAN",
+  "inputs": { "src": 1.0 },
+  "expect": 0,
+  "doc_url": "",
+  "pass_marker": "IS_NAN SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/is_nan"
+}

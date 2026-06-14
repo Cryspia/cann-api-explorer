@@ -20,6 +20,7 @@ apis:
   - {name: Div,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 6.0, y: 2.0}, expect: 3.0}
   - {name: Max,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 1.0, y: 2.0}, expect: 2.0}
   - {name: Min,  lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: 1.0, y: 2.0}, expect: 1.0}
+  - {name: Prelu, lib: ascendc, category: vector, arity: binary, dtypes: [half, float], status: todo, inputs: {x: -3.0, y: 0.5}, expect: -1.5}
   # ---- vector-scalar (scalar; signature (dst,src,scalar,count) verified against the header) ----
   - {name: Adds, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 1.0, s: 2.0}, expect: 3.0}
   - {name: Muls, lib: ascendc, category: vector, arity: scalar, dtypes: [half, float], status: todo, inputs: {x: 3.0, s: 2.0}, expect: 6.0}
@@ -66,6 +67,10 @@ apis:
   - {name: Rint, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/rint.h", proto_header: "rint.h", inputs: {x: 2.4}, expect: 2.0, tol: "1e-3"}
   - {name: Log,    lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/log.h",    proto_header: "log.h",    inputs: {x: 1.0}, expect: 0.0, tol: "5e-3"}
   - {name: Lgamma, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/lgamma.h", proto_header: "lgamma.h", inputs: {x: 1.0}, expect: 0.0, tol: "5e-3"}
+  - {name: Acosh, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/acosh.h", proto_header: "acosh.h", inputs: {x: 1.0}, expect: 0.0, tol: "5e-3"}
+  - {name: Asinh, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/asinh.h", proto_header: "asinh.h", inputs: {x: 0.0}, expect: 0.0, tol: "5e-3"}
+  - {name: Atanh, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/atanh.h", proto_header: "atanh.h", inputs: {x: 0.0}, expect: 0.0, tol: "5e-3"}
+  - {name: Digamma, lib: ascendc, category: highlevel, arity: activation, dtypes: [half, float], status: todo, include: "lib/math/digamma.h", proto_header: "digamma.h", inputs: {x: 1.0}, expect: -0.5772157, tol: "5e-3"}
   # ---- binary high-level math (binary_act) ----
   - {name: Power, lib: ascendc, category: highlevel, arity: binary_act, dtypes: [half, float], status: todo, include: "lib/math/power.h", proto_header: "power.h", inputs: {x: 2.0, y: 3.0}, expect: 8.0, tol: "5e-3"}
   - {name: Fmod,  lib: ascendc, category: highlevel, arity: binary_act, dtypes: [half, float], status: todo, include: "lib/math/fmod.h",  proto_header: "fmod.h",  inputs: {x: 7.0, y: 3.0}, expect: 1.0, tol: "5e-3"}

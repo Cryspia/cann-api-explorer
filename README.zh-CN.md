@@ -69,7 +69,7 @@ doc.md 的函数原型由 `gen.py` **从 toolkit 头文件抽取**（权威、�
 
 ## 范围与完成状态
 
-- **A 线（可仿真 Ascend C kernel API）= 核心 ✅ 已完成 84/84**：9 个 arity 家族 + 4 类 Tiling 技术（device TilingFunc / 少字段手填 / host tiling 框架 / 免 tiling）+ Cube(Matmul) + 多核同步(SyncAll/IBSet/IBWait) + 数据重排/原子/标量等。本 3510 仿真环境可做成可校验单元的核函数 API 已穷尽；未覆盖项（含 arch 限制的 Conv3D/Conv2D）逐一交代于 [`docs_zh-CN/INDEX.md`](docs_zh-CN/INDEX.md) 「A 线 API 覆盖收尾」。
+- **A 线（可仿真 Ascend C kernel API）= 核心 ✅ 已完成 118/118**：9 个 arity 家族 + 4 类 Tiling 技术（device TilingFunc / 少字段手填 / host tiling 框架 / 免 tiling）+ Cube(Matmul) + 多核同步(SyncAll/IBSet/IBWait) + 数据重排/原子/标量等。**计算类算子已接近穷尽** —— 除主流算子外：融合二元(AddRelu/SubRelu/FusedMulAdd/MulAddDst/MulAddRelu/AbsSub/ExpSub/Mull)、移位(ShiftLeft/ShiftRight)、标量变体(Ands/Ors/LeakyRelu/MulsCast)、Prelu、反双曲(Acosh/Asinh/Atanh)、Digamma、ClampMax/Min、Fma、SinCos、GeGLU、Xor、逻辑(LogicalAnd/Or/Xor/Not，bool 输出)、判断(IsNan/IsInf/IsFinite，bool 输出)、Where、CumSum 均已覆盖。剩余未覆盖（量化 AddDeqRelu、Philox 随机、arch 限制的 Conv3D/Conv2D）逐一交代于 [`docs_zh-CN/INDEX.md`](docs_zh-CN/INDEX.md) 「A 线 API 覆盖收尾」。
 - **B 线（Runtime/ACL host API）= ✅ 已完成**：发射核函数的 host 脚手架，系统记录于 [`docs_zh-CN/runtime/host_api.md`](docs_zh-CN/runtime/host_api.md)。
 - **C 线（GE/HCCL/HIXL/DVPP/ATB/SiP）= 文档说明不覆盖**：逐库「为何不覆盖 + 将来条件」见 [`docs_zh-CN/notcovered.md`](docs_zh-CN/notcovered.md)（需真实驱动/多卡/专用硬件）。
 - **待真实环境**：Conv3D/Conv2D（toolkit 仅 m220 实现，需 910B 系环境验证）。
