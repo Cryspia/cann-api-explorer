@@ -1,0 +1,16 @@
+{
+  "name": "Normalize",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "NORMALIZE",
+  "inputs": {"shape": "[A=2,R=8] RPAD=8", "x": 1.0, "mean": 0.0, "variance": 1.0, "gamma": 1.0, "beta": 0.0, "eps": 0.0},
+  "expect": {"output": 1.0, "rstd": 1.0},
+  "doc_url": "",
+  "pass_marker": "NORMALIZE SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/normalize",
+  "note": "Normalize(output, outputRstd<float>, inputMean<float>, inputVariance<float>, inputX, gamma, beta, sharedTmpBuffer, epsilon, NormalizePara). Given precomputed per-row mean/var: rstd=rsqrt(var+eps), output=(x-mean)*rstd*gamma+beta. The 3510 impl reads only para.{aLength,rLength,rLengthWithPadding}; no host tiling. mean=0,var=1,eps=0->rstd=1; x=1,gamma=1,beta=0->output=1."
+}

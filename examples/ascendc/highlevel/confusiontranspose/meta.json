@@ -1,0 +1,16 @@
+{
+  "name": "ConfusionTranspose",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "half",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "CONFUSIONTRANSPOSE",
+  "inputs": {"shape": "[16,16]", "src": "h*16+w", "transposeType": "TRANSPOSE_ND2ND_021", "tiling": "{dim0=1,dim1=16,dim2=16}"},
+  "expect": "dst[i][j] = src[j][i] = j*16+i (2D transpose)",
+  "doc_url": "",
+  "pass_marker": "CONFUSIONTRANSPOSE SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/confusiontranspose",
+  "note": "adv_api Transpose(dst, src, sharedTmpBuffer, TransposeType, ConfusionTransposeTiling). Mode TRANSPOSE_ND2ND_021 transposes the last two axes of [dim0,dim1,dim2]; dim0=1 makes it a plain [H,W]->[W,H] transpose. Tiling param0/1/2 = dim0/dim1/dim2."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "SelectWithBytesMask",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "half",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SELECTWITHBYTESMASK",
+  "inputs": {"shape": "[16,16]", "src0": "i", "src1_scalar": 99.0, "mask": "per-row first 8 cols=0, last 8 cols=1"},
+  "expect": "mask==0 -> src0=index, mask==1 -> scalar 99",
+  "doc_url": "",
+  "pass_marker": "SELECTWITHBYTESMASK SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/selectwithbytesmask",
+  "note": "adv_api/select tensor-scalar overload Select(dst, src0Tensor, src1Scalar, byteMask, sharedTmpBuffer, SelectWithBytesMaskShapeInfo). mask byte==0 keeps src0 tensor, !=0 takes the scalar."
+}

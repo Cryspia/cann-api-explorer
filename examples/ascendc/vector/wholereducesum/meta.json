@@ -1,0 +1,17 @@
+{
+  "name": "WholeReduceSum",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "reduce",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "WHOLEREDUCESUM",
+  "inputs": {
+    "x": 1.0
+  },
+  "expect": 64.0,
+  "doc_url": "",
+  "pass_marker": "WHOLEREDUCESUM SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/wholereducesum"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "SoftmaxFlashV3",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "half/float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SOFTMAXFLASHV3",
+  "inputs": {"shape": "[8,64]", "x": 0.0, "isUpdate": false, "splitMeanCnt": 1},
+  "expect": {"dst": 1.0, "mean": 0.0, "sum": 64.0, "max": 0.0},
+  "doc_url": "",
+  "pass_marker": "SOFTMAXFLASHV3 SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/softmaxflashv3",
+  "note": "FlashAttention-2 online softmax v3 (first block, isUpdate=false). Adds a mean/shift step over flashv2: rowMeanGlobal/mean computed, x shifted by alpha/(1-alpha) term, then max=rowmax, y=exp(x-max) (un-normalized), sum=rowsum(y). API forces src/dst=half, mean/sum/max=float. Device-side SoftMaxTilingFunc builds SoftMaxTiling; FlashV3 knobs in SoftMaxParams (splitMeanCnt=1 for K=64). x=0 -> dst all 1.0, mean=0, sum=64, max=0 (reduce block layout, col 0 of each 8-float block)."
+}

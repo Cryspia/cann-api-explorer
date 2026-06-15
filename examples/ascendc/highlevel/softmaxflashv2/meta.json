@@ -1,0 +1,16 @@
+{
+  "name": "SoftmaxFlashV2",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SOFTMAXFLASHV2",
+  "inputs": {"shape": "[8,64]", "x": 0.0, "isUpdate": false},
+  "expect": {"dst": 1.0, "sum": 64.0, "max": 0.0},
+  "doc_url": "",
+  "pass_marker": "SOFTMAXFLASHV2 SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/softmaxflashv2",
+  "note": "FlashAttention-2 online softmax (first block, isUpdate=false): max=rowmax(x), y=exp(x-max) (un-normalized), sum=rowsum(y). Device-side SoftMaxFlashV2TilingFunc builds the tiling inside the kernel. x=0 -> dst all 1.0, per-row sum=64, max=0. Reduce outputs use AscendC block layout (value in col 0 of each 8-float block)."
+}

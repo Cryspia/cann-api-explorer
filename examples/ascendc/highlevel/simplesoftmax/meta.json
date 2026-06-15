@@ -1,0 +1,16 @@
+{
+  "name": "SimpleSoftMax",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SIMPLESOFTMAX",
+  "inputs": {"shape": "[8,64]", "x": 0.0, "inMax": 0.0, "inSum": 64.0},
+  "expect": 0.015625,
+  "doc_url": "",
+  "pass_marker": "SIMPLESOFTMAX SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/simplesoftmax",
+  "note": "Simplified softmax that takes pre-computed per-row max/sum: y=exp(x-inMax)/inSum. Device-side SoftMaxTilingFunc builds the tiling inside the kernel. x=0, inMax=0, inSum=64 (reduce block layout, value in col 0 of each 8-float block) -> y=exp(0)/64=1/64=0.015625 everywhere."
+}

@@ -2,7 +2,7 @@
 
 # Track B · Runtime / AscendCL host API documentation
 
-> **Positioning**: These are **host-side** APIs (executed on the CPU); they themselves **do not produce AI Core instructions and do not produce CAModel simulation reports**. Their role is "**scaffolding for launching kernels**" —— allocate memory, move data, start the stream, launch the kernel, synchronize, recycle. Every Track A example's `main.cpp` uses them. This document systematically records the host APIs actually used in this project (inventoried from the `main.cpp` of 85 units).
+> **Positioning**: These are **host-side** APIs (executed on the CPU); they themselves **do not produce AI Core instructions and do not produce CAModel simulation reports**. Their role is "**scaffolding for launching kernels**" —— allocate memory, move data, start the stream, launch the kernel, synchronize, recycle. Every Track A example's `main.cpp` uses them. This document systematically records the host APIs actually used in this project (inventoried from the `main.cpp` of 172 units).
 
 ## Standard call sequence (the skeleton of every main.cpp)
 
@@ -69,6 +69,6 @@ All calls are wrapped with the `CHECK_ACL(x)` macro (checks `aclError != ACL_SUC
 | `platform_ascendc::PlatformAscendCManager::GetInstance()` | returns `PlatformAscendC*` | Fetches platform info (core count / UB size, etc.) when computing tiling on the host side. Used in this project by TopK (`TopKTilingFunc`) and Conv3D (`Conv3dTiling`). include `tiling/platform/platform_ascendc.h`. |
 
 ## Coverage boundary (best-effort)
-- The 13 APIs above + 1 platform interface **already cover all host APIs used in the main.cpp of this project's 85 units**.
+- The 13 APIs above + 1 platform interface **already cover all host APIs used in the main.cpp of this project's 172 units**.
 - Unused Runtime APIs (aclrtEvent events, aclrtMemset, multi-stream/context, aclrtMemcpyAsync, etc.) belong to the same family of extensions, added as needed; they are likewise host scaffolding and do not produce CAModel reports.
-- The "verification" of Runtime APIs = calls return `ACL_SUCCESS` and run through together with the kernel (already implicit in the 82 PASSED units).
+- The "verification" of Runtime APIs = calls return `ACL_SUCCESS` and run through together with the kernel (already implicit in the 172 PASSED units).

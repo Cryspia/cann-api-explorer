@@ -1,10 +1,11 @@
 # AtomicAdd -- simulation result
 
 - Status: **passed**
+- Host arch: `aarch64`
 - Build SOC: `Ascend950PR_9599`  Run SOC: `Ascend950`
 - PASS marker: `ATOMICADD SIMULATION PASSED`
 - Instruction count: 1760
-- Execution time (ns): 2252.73
+- Execution time (ns): 2243.03
 
 ## record log (tail)
 ```
@@ -12,58 +13,58 @@ INFO:root:CannProf successfully finished kernel profiling, reports are ready for
 INFO:root:====================
 INFO:root:Report INFO
 INFO:root:Analysis type: hotspots
-INFO:root:Output folder: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694
-INFO:root:Generated Architecture Diagrams: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports
-INFO:root:Chrome Tracing reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports
-INFO:root:Critical path reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports
-INFO:root:Issue Queue reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports
-INFO:root:Scalar IPC dynamic reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports
-INFO:root:Vector IPC dynamic reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports
-INFO:root:Instruction Cache reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports
+INFO:root:Output folder: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422
+INFO:root:Generated Architecture Diagrams: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports
+INFO:root:Chrome Tracing reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports
+INFO:root:Critical path reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports
+INFO:root:Issue Queue reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports
+INFO:root:Scalar IPC dynamic reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports
+INFO:root:Vector IPC dynamic reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports
+INFO:root:Instruction Cache reports: /home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports
 INFO:root:====================
 INFO:root:Functions INFO
 INFO:root:Kernel name: kernel
 INFO:root:Total number of instructions: 0
 INFO:root:Total number of instruction executions: 1760
-INFO:root:Execution time (ns): 2252.73
+INFO:root:Execution time (ns): 2243.03
 INFO:root:====================
-[2026-06-11 18:46:04] [INFO] Report generation completed successfully.
+[2026-06-14 19:36:07] [INFO] Report generation completed successfully.
 +==========================================================================+
 │ (Report) Cannsim auto generate report successed!                         │
 +==========================================================================+
 Cannsim auto generate report saved at:
- └─/home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260611184534_sim_exe/report
+ └─/home/spark/projects/cann-simulator/cann-api-explorer/examples/ascendc/vector/atomicadd/report/cannsim_20260614193537_sim_exe/report
 ```
 
 ## Report artifacts
 ```
-cannsim_20260611184534_sim_exe/cannsim.log
-cannsim_20260611184534_sim_exe/instr.bin
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_operator.svg
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_request.svg
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/aicore_memory_sim_view_number_of_requests.svg
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/aicore_utilization.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_0_critical_path_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_0_icache_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_0_scalar_ipc_dynamic_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_0_tracing_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_16_critical_path_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_16_icache_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_16_scalar_ipc_dynamic_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_16_tracing_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_17_critical_path_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_17_icache_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_17_scalar_ipc_dynamic_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_17_tracing_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_1_critical_path_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_1_icache_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_1_scalar_ipc_dynamic_report.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/core_1_tracing_report_0.json
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/kernel_0_reports/instruction_duration_distribution.html
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/perf_log.dump
-cannsim_20260611184534_sim_exe/report/results_20260612_024603810694/runner.py.log
-cannsim_20260611184534_sim_exe/route_table.txt
-cannsim_20260611184534_sim_exe/rtb_debug.txt
-cannsim_20260611184534_sim_exe/.soc-version
+cannsim_20260614193537_sim_exe/cannsim.log
+cannsim_20260614193537_sim_exe/instr.bin
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_operator.svg
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_request.svg
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/aicore_memory_sim_view_number_of_requests.svg
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/aicore_utilization.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_0_critical_path_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_0_icache_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_0_scalar_ipc_dynamic_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_0_tracing_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_16_critical_path_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_16_icache_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_16_scalar_ipc_dynamic_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_16_tracing_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_17_critical_path_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_17_icache_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_17_scalar_ipc_dynamic_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_17_tracing_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_1_critical_path_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_1_icache_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_1_scalar_ipc_dynamic_report.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/core_1_tracing_report_0.json
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/kernel_0_reports/instruction_duration_distribution.html
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/perf_log.dump
+cannsim_20260614193537_sim_exe/report/results_20260615_033607172422/runner.py.log
+cannsim_20260614193537_sim_exe/route_table.txt
+cannsim_20260614193537_sim_exe/rtb_debug.txt
+cannsim_20260614193537_sim_exe/.soc-version
 record.log
 ```

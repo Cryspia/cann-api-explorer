@@ -1,0 +1,16 @@
+{
+  "name": "SoftmaxGradFront",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SOFTMAXGRADFRONT",
+  "inputs": {"shape": "[8,64]", "grad": 2.0, "x": 0.015625},
+  "expect": 2.0,
+  "doc_url": "",
+  "pass_marker": "SOFTMAXGRADFRONT SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/softmaxgradfront",
+  "note": "Front variant of softmax backward with Tiling: y=rowsum(grad*x), producing only the per-row reduction (not the full grad*x-sum*x). Device-side SoftMaxTilingFunc builds the tiling inside the kernel. x=uniform softmax output 1/64, grad=const 2.0 -> y=2.0 per row. Output is reduce-shaped (scalar in col 0 of each 8-float block)."
+}

@@ -11,7 +11,7 @@ Status legend: `📝`=doc created `🧪`=has example `✅`=passed simulation `�
 
 ## Track A · Ascend C kernel API (runnable under cannsim simulation)
 
-### Vector compute vector/ —— ✅ 56/56 passed simulation
+### Vector compute vector/ —— ✅ 73/73 passed simulation
 binary=`(dst,src0,src1,count)`, unary=`(dst,src,count)`, scalar=`(dst,src,scalar,count)`;
 this batch of examples uniformly uses float, 8 cores, double buffer, SOC build `Ascend950PR_9599` / simulation `Ascend950`.
 
@@ -73,8 +73,25 @@ this batch of examples uniformly uses float, 8 cores, double buffer, SOC build `
 | AbsSub | fused abs(src0-src1) | [doc](../examples/ascendc/vector/abssub/doc.md) | ✅ |
 | ExpSub | fused exp(src0-src1) | [doc](../examples/ascendc/vector/expsub/doc.md) | ✅ |
 | Mull | low-half integer multiply | [doc](../examples/ascendc/vector/mull/doc.md) | ✅ |
+| BlockReduceSum | per-32B-block reduce sum | [doc](../examples/ascendc/vector/blockreducesum/doc.md) | ✅ |
+| BlockReduceMax | per-32B-block reduce max | [doc](../examples/ascendc/vector/blockreducemax/doc.md) | ✅ |
+| BlockReduceMin | per-32B-block reduce min | [doc](../examples/ascendc/vector/blockreducemin/doc.md) | ✅ |
+| WholeReduceSum | per-256B-repeat reduce sum | [doc](../examples/ascendc/vector/wholereducesum/doc.md) | ✅ |
+| WholeReduceMax | per-256B-repeat reduce max | [doc](../examples/ascendc/vector/wholereducemax/doc.md) | ✅ |
+| WholeReduceMin | per-256B-repeat reduce min | [doc](../examples/ascendc/vector/wholereducemin/doc.md) | ✅ |
+| PairReduceSum | adjacent-pair reduce sum | [doc](../examples/ascendc/vector/pairreducesum/doc.md) | ✅ |
+| RepeatReduceSum | per-repeat reduce sum | [doc](../examples/ascendc/vector/repeatreducesum/doc.md) | ✅ |
+| Interleave | interleave two vectors | [doc](../examples/ascendc/vector/interleave/doc.md) | ✅ |
+| DeInterleave | de-interleave into two vectors | [doc](../examples/ascendc/vector/deinterleave/doc.md) | ✅ |
+| Gatherb | block-level gather | [doc](../examples/ascendc/vector/gatherb/doc.md) | ✅ |
+| Compares | vector-scalar compare to mask (canonical replacement for CompareScalar) | [doc](../examples/ascendc/vector/compares/doc.md) | ✅ |
+| Truncate | truncate-round keeping dtype (distinct from math Trunc) | [doc](../examples/ascendc/vector/truncate/doc.md) | ✅ |
+| AddReluCast | fused relu(a+b) + quantized cast | [doc](../examples/ascendc/vector/addrelucast/doc.md) | ✅ |
+| SubReluCast | fused relu(a-b) + quantized cast | [doc](../examples/ascendc/vector/subrelucast/doc.md) | ✅ |
+| AddDeqRelu | relu((a+b)*deqScale) | [doc](../examples/ascendc/vector/adddeqrelu/doc.md) | ✅ |
+| CastDequant | int32→half dequant by deqScale | [doc](../examples/ascendc/vector/castdequant/doc.md) | ✅ |
 
-The vector class **passed 56/56**, covering binary/unary/scalar/cast/reduce/bitbin/bitun + hand-written masks (Compare/CompareScalar+Select) + Transpose + data rearrangement (Duplicate/CreateVecIndex/Gather/Scatter/Brcb) + fusion (Axpy/MulCast/FusedMulAdd/MulAddDst/MulAddRelu/AddRelu/SubRelu/AbsSub/ExpSub) + activation variants (PRelu/LeakyRelu) + scalar/bit ops (ShiftLeft/ShiftRight/Ands/Ors/MulsCast/Mull) + atomics (AtomicAdd).
+The vector class **passed 73/73**, covering binary/unary/scalar/cast/reduce/bitbin/bitun + hand-written masks (Compare/CompareScalar+Select) + Transpose + data rearrangement (Duplicate/CreateVecIndex/Gather/Scatter/Brcb) + fusion (Axpy/MulCast/FusedMulAdd/MulAddDst/MulAddRelu/AddRelu/SubRelu/AbsSub/ExpSub) + activation variants (PRelu/LeakyRelu) + scalar/bit ops (ShiftLeft/ShiftRight/Ands/Ors/MulsCast/Mull) + atomics (AtomicAdd) + reduce-granularity variants (BlockReduceSum/Max/Min, WholeReduceSum/Max/Min, PairReduceSum, RepeatReduceSum) + data-rearrange (Interleave/DeInterleave, Gatherb) + vector-scalar compare (Compares) + truncate-round (Truncate) + relu-cast/dequant variants (AddReluCast/SubReluCast/AddDeqRelu/CastDequant).
 
 ### Scalar compute scalar/ —— ✅ 1/1 passed simulation
 
@@ -91,7 +108,7 @@ The vector class **passed 56/56**, covering binary/unary/scalar/cast/reduce/bitb
 
 > The remaining scalar / data-movement / memory-resource APIs (ScalarCast, Copy, TPipe/TQue/TBuf/TBufPool, etc.) are recorded together below in "Track A not-covered API list".
 
-### High-level API highlevel/ —— ✅ 57/57 passed simulation (5 activation + 28 math + 6 normalization + 7 logical/compare + 6 elementwise/util + TopK/Sort/Pad/Broadcast + LogSoftmax)
+### High-level API highlevel/ —— ✅ 94/94 passed simulation (5 activation + 32 math + 6 normalization + 7 logical/compare + 6 elementwise/util + TopK/Sort/Pad/Broadcast/UnPad + LogSoftmax + 2 gated + 2 adv-reduce + 1 index + 3 quant + multi-policy Quantize + 5 normalization-extra + WelfordUpdate + 2 softmax-grad/flash + SimpleSoftMax/SoftmaxFlashV3/SoftmaxGradFront + 4 adv-reduce-family + 3 select/format + 5 logical/bitwise-variant)
 
 **Activation class** (simple `(dst,src,count)`, no Tiling, `#include "lib/activation/<op>.h"`):
 
@@ -102,11 +119,14 @@ The vector class **passed 56/56**, covering binary/unary/scalar/cast/reduce/bitb
 | Silu | activation | [doc](../examples/ascendc/highlevel/silu/doc.md) | ✅ |
 | Swish | activation | [doc](../examples/ascendc/highlevel/swish/doc.md) | ✅ |
 | GeGLU | gated GLU activation, gelu(a)*b | [doc](../examples/ascendc/highlevel/geglu/doc.md) | ✅ |
+| SwiGLU | gated GLU activation, x1*silu_beta(x2) | [doc](../examples/ascendc/highlevel/swiglu/doc.md) | ✅ |
+| ReGLU | gated GLU activation, x1*relu(x2) | [doc](../examples/ascendc/highlevel/reglu/doc.md) | ✅ |
 
-**High-level math class** adv_api/math (no-tmp `(dst,src,count)` / `(dst,src0,src1,count)` overloads, `#include "lib/math/<op>.h"`) —— ✅ 25/25:
-- unary (activation arity, 24): Sin/Cos/Tan/Tanh/Sinh/Cosh/Asin/Acos/Atan/Asinh/Acosh/Atanh/Erf/Erfc/Floor/Ceil/Round/Rint/Trunc/Sign/Frac/Log/Lgamma/Digamma
+**High-level math class** adv_api/math (no-tmp `(dst,src,count)` / `(dst,src0,src1,count)` overloads, `#include "lib/math/<op>.h"`) —— ✅ 29/29:
+- unary (activation arity, 28): Sin/Cos/Tan/Tanh/Sinh/Cosh/Asin/Acos/Atan/Asinh/Acosh/Atanh/Erf/Erfc/Floor/Ceil/Round/Rint/Trunc/Sign/Frac/Log/Log2/Log10/Lgamma/Digamma/FasterGelu/FasterGeluV2
 - binary (binary_act arity, 3): Power(2³=8)/Fmod(7%3=1)/Hypot(3,4=5)
 - dual-output (1): SinCos (one src → both sin and cos outputs)
+(Log2=base-2 log, Log10=base-10 log; FasterGelu/FasterGeluV2=faster gelu approximations.)
 (Asinh=inverse hyperbolic sine, Acosh=inverse hyperbolic cosine, Atanh=inverse hyperbolic tangent, Digamma=ψ(x) logarithmic derivative of Γ; see each unit doc at `examples/ascendc/highlevel/<op>/doc.md`).
 
 **Logical / compare class** (boolean-output elementwise, `#include "lib/math/<op>.h"`) —— ✅ 7/7:
@@ -132,6 +152,76 @@ The vector class **passed 56/56**, covering binary/unary/scalar/cast/reduce/bitb
 | Where | conditional select (mask?a:b) | [doc](../examples/ascendc/highlevel/where/doc.md) | ✅ |
 | CumSum | prefix sum (cumulative sum along axis) | [doc](../examples/ascendc/highlevel/cumsum/doc.md) | ✅ |
 
+**adv_api reduction class** (last-axis per-row reduction with `SumParams`/`MeanParams` + tmp, distinct from vector ReduceSum/Max/Min) —— ✅ 2/2:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| Mean | per-row last-axis mean (MeanParams + tmp) | [doc](../examples/ascendc/highlevel/mean/doc.md) | ✅ |
+| Sum | per-row last-axis sum (SumParams + tmp) | [doc](../examples/ascendc/highlevel/sum/doc.md) | ✅ |
+
+**Index generation class** —— ✅ 1/1:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| ArithProgression | arange, dst[i]=first+i*diff | [doc](../examples/ascendc/highlevel/arithprogression/doc.md) | ✅ |
+
+**Quantization class** —— ✅ 4/4:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| AscendQuant | dst int8 = round(src*scale+offset) | [doc](../examples/ascendc/highlevel/ascendquant/doc.md) | ✅ |
+| AscendDequant | dst = src_int32 * deqScale (tensor) | [doc](../examples/ascendc/highlevel/ascenddequant/doc.md) | ✅ |
+| AscendAntiQuant | dst = scale*(src_int8+offset) | [doc](../examples/ascendc/highlevel/ascendantiquant/doc.md) | ✅ |
+| Quantize | multi-policy quantization with QuantizeConfig (distinct from AscendQuant) | [doc](../examples/ascendc/highlevel/quantize/doc.md) | ✅ |
+
+**Normalization extras class** (forward tail / Welford update+merge / backward grads / dropout) —— ✅ 6/6:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| Normalize | LayerNorm second half given mean/var | [doc](../examples/ascendc/highlevel/normalize/doc.md) | ✅ |
+| WelfordUpdate | Welford online update step | [doc](../examples/ascendc/highlevel/welfordupdate/doc.md) | ✅ |
+| WelfordFinalize | merge per-block mean/variance | [doc](../examples/ascendc/highlevel/welfordfinalize/doc.md) | ✅ |
+| LayerNormGrad | backward outputPdX / resForGamma | [doc](../examples/ascendc/highlevel/layernormgrad/doc.md) | ✅ |
+| LayerNormGradBeta | backward outputPdGamma / outputPdBeta | [doc](../examples/ascendc/highlevel/layernormgradbeta/doc.md) | ✅ |
+| DropOut | deterministic, dst=(1/keepProb)*mask*src (caller-provided mask) | [doc](../examples/ascendc/highlevel/dropout/doc.md) | ✅ |
+
+**Softmax backward / flash class** (cross-checked against the cann-on-gpu operator library) —— ✅ 5/5:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| SoftmaxGrad | softmax backward, y=grad*x - rowsum(grad*x)*x | [doc](../examples/ascendc/highlevel/softmaxgrad/doc.md) | ✅ |
+| SoftmaxGradFront | softmax backward front half | [doc](../examples/ascendc/highlevel/softmaxgradfront/doc.md) | ✅ |
+| SoftmaxFlashV2 | flash-attention online softmax (max=rowmax, y=exp(x-max) unnormalized, sum=rowsum(y)) | [doc](../examples/ascendc/highlevel/softmaxflashv2/doc.md) | ✅ |
+| SoftmaxFlashV3 | flash-attention v3 online softmax | [doc](../examples/ascendc/highlevel/softmaxflashv3/doc.md) | ✅ |
+| SimpleSoftMax | normalize given max/sum | [doc](../examples/ascendc/highlevel/simplesoftmax/doc.md) | ✅ |
+
+**adv_api reduce family class** (Any/All/Prod/XorSum, distinct from the older vector ReduceSum/Max/Min) —— ✅ 4/4:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| ReduceXorSum | int16 Σ(a^b) | [doc](../examples/ascendc/highlevel/reducexorsum/doc.md) | ✅ |
+| ReduceAny | any-true → 1 | [doc](../examples/ascendc/highlevel/reduceany/doc.md) | ✅ |
+| ReduceAll | all-true → 1 | [doc](../examples/ascendc/highlevel/reduceall/doc.md) | ✅ |
+| ReduceProd | float running product | [doc](../examples/ascendc/highlevel/reduceprod/doc.md) | ✅ |
+
+**Select / format class** —— ✅ 3/3:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| SelectWithBytesMask | byte-mask select between src0 / scalar | [doc](../examples/ascendc/highlevel/selectwithbytesmask/doc.md) | ✅ |
+| ConfusionTranspose | attention reshape+transpose (TransposeType + ConfusionTransposeTiling) | [doc](../examples/ascendc/highlevel/confusiontranspose/doc.md) | ✅ |
+| TransData | NCDHW↔NDC1HWC0 / FRACTAL_Z_3D fractal format conversion | [doc](../examples/ascendc/highlevel/transdata/doc.md) | ✅ |
+
+**Tensor-scalar logical + bitwise count-mode variant class** (adv_api count entry, homogeneous with vector And/Or/Not) —— ✅ 5/5:
+
+| API | Shape | doc | Status |
+|-----|------|-----|------|
+| LogicalAnds | tensor-scalar logical AND (dst=bool) | [doc](../examples/ascendc/highlevel/logical_ands/doc.md) | ✅ |
+| LogicalOrs | tensor-scalar logical OR (dst=bool) | [doc](../examples/ascendc/highlevel/logical_ors/doc.md) | ✅ |
+| BitwiseAnd | int16 bitwise AND (adv_api count entry) | [doc](../examples/ascendc/highlevel/bitwise_and/doc.md) | ✅ |
+| BitwiseOr | int16 bitwise OR (adv_api count entry) | [doc](../examples/ascendc/highlevel/bitwise_or/doc.md) | ✅ |
+| BitwiseNot | int16 bitwise NOT (adv_api count entry) | [doc](../examples/ascendc/highlevel/bitwise_not/doc.md) | ✅ |
+
 **Normalization class with Tiling** (breakthrough: two in-kernel tiling techniques, no host tiling framework needed):
 
 | API | tiling source | doc | Status |
@@ -151,6 +241,7 @@ The vector class **passed 56/56**, covering binary/unary/scalar/cast/reduce/bitb
 | TopK | host `TopKTilingFunc` computes `TopkTiling` → passed in via GM (additionally links `libgraph_base.so`) | [doc](../examples/ascendc/highlevel/topk/doc.md) | ✅ |
 | Sort | no tiling (count mode, **ascending**, idx follows) | [doc](../examples/ascendc/highlevel/sort/doc.md) | ✅ |
 | Pad | `PadTiling` hand-filled tiling of 3 fields (srcHeight/srcWidth/srcOriWidth) | [doc](../examples/ascendc/highlevel/pad/doc.md) | ✅ |
+| UnPad | `UnPadTiling` hand-filled tiling, inverse of Pad | [doc](../examples/ascendc/highlevel/unpad/doc.md) | ✅ |
 | Broadcast | device-side `GetBroadcastTilingInfo` computed in-kernel | [doc](../examples/ascendc/highlevel/broadcast/doc.md) | ✅ |
 
 **Cube matrix multiply** cube/ —— host tiling framework brought up:
@@ -164,12 +255,16 @@ All four tiling techniques verified: **device `*TilingFunc`** (SoftMax/Broadcast
 
 ### Track A API coverage wrap-up (already added / found unavailable / still not covered)
 
-Covered **116** units. The table below explains the per-item disposition of entries that were previously on the "not covered list".
+Covered **172** units. The table below explains the per-item disposition of entries that were previously on the "not covered list".
 
 **① Already added as units (✅, see the sections above)**
 Compare, GatherMask, Axpy, MulCast (vector compute); AtomicAdd (atomics); ScalarCast (scalar).
 Newly added fused / scalar / bit ops (vector compute): PRelu, LeakyRelu, ShiftLeft, ShiftRight, Ands, Ors, AddRelu, SubRelu, MulsCast, FusedMulAdd, MulAddDst, MulAddRelu, AbsSub, ExpSub, Mull.
 Newly added high-level ops: Acosh, Asinh, Atanh, Digamma, SinCos, GeGLU, ClampMax, ClampMin, Fma, Xor, LogicalAnd, LogicalOr, LogicalXor, LogicalNot, IsNan, IsInf, IsFinite, Where, CumSum.
+Newly added adv_api compute sub-libraries: gated activations SwiGLU, ReGLU; adv_api reductions Mean, Sum (last-axis); index generation ArithProgression; quantization AscendQuant, AscendDequant, AscendAntiQuant; normalization extras Normalize, WelfordFinalize, LayerNormGrad, LayerNormGradBeta, DropOut.
+adv_api kernel primitives filled in after cross-checking against the cann-on-gpu operator library: softmax backward / flash-attention online softmax SoftmaxGrad, SoftmaxFlashV2; adv_api reduce family ReduceAny, ReduceAll, ReduceProd, ReduceXorSum (distinct from the older vector ReduceSum/Max/Min); byte-mask select SelectWithBytesMask; format conversion ConfusionTranspose, TransData; tensor-scalar logical + bitwise count-mode variants LogicalAnds, LogicalOrs, BitwiseAnd, BitwiseOr, BitwiseNot.
+Primitives added after going over the local AscendC kernel headers: reduce-granularity variants BlockReduceSum/Max/Min (per-32B-block), WholeReduceSum/Max/Min (per-256B-repeat), PairReduceSum (adjacent-pair), RepeatReduceSum; data-rearrange Interleave, DeInterleave, Gatherb (block gather); vector-scalar compare Compares (canonical replacement for CompareScalar); truncate-round Truncate (keeps dtype, distinct from math Trunc); log-base Log2, Log10; faster-gelu FasterGelu, FasterGeluV2; softmax family SimpleSoftMax, SoftmaxFlashV3, SoftmaxGradFront; UnPad (inverse of Pad); WelfordUpdate (online step); multi-policy Quantize (QuantizeConfig); relu-cast/dequant variants AddReluCast, SubReluCast, AddDeqRelu, CastDequant.
+The following are deprecated aliases already covered by their canonical names (doc-only, not counted): FusedMulsCast=MulsCast, FusedAbsSub=AbsSub, FusedExpSub=ExpSub, FusedMulAddRelu=MulAddRelu, CastDeq=CastDequant.
 
 **② Attempted, found unavailable in this environment (🚫, code/counterexample kept, meta.json.unsupported not counted in pass total)**
 | API | Header | Conclusion |
@@ -182,8 +277,6 @@ Newly added high-level ops: Acosh, Asinh, Atanh, Digamma, SinCos, GeGLU, ClampMa
 **③ Still not covered (homogeneous with covered items / needs special parameters / auxiliary facilities, added as needed)**
 | API | Header | Reason not added |
 |-----|----|---------|
-| Quantized cast/fusion (CastDequant/CastDeq/AddReluCast/AddDeqRelu) | vec_vconv | quantization cast needs deqScale parameter; basic Cast + plain AddRelu already cover the unquantized semantics |
-| FusedMulsCast | vec_vconv | scalar-multiply + quantized cast variant; plain MulsCast already covers the unquantized form |
 | Philox random generation | rand | pseudo-random key/counter generation, no reference numeric output to verify against |
 | BilinearInterpolation | vec_bilinearinterpolation | huge number of parameters (offset/hRepeat/vRepeat/tmp), no count simplified mode |
 | Gemm (GetGemmTiling) | gemm | same Cube+host-tiling as Matmul, already represented by Matmul |
@@ -192,6 +285,7 @@ Newly added high-level ops: Acosh, Asinh, Atanh, Digamma, SinCos, GeGLU, ClampMa
 | DataCacheCleanAndInvalid / Preload | cache | cache management auxiliaries, dcci already indirectly used inside SyncAll/IB |
 | DumpTensor / PRINTF | dump_tensor | in-kernel debug output, not a numeric operator |
 | ListTensorDesc / SetSysWorkSpacePtr | list_tensor / swap_mem | descriptor / workspace pointer, auxiliary infrastructure |
+| Std | adv_api/std | not an operator — `AscendC::Std` is a C++ standard-library shim namespace (algorithm/cmath/type_traits etc., pure compile-time templates, no kernel / tensor I/O); honestly skipped (neither todo nor failure). |
 
 > Note: the **memory resource class** (TPipe/TQue/TBuf/TBufPool) is infrastructure, already embedded and used inside **every** kernel (InitBuffer/AllocTensor/EnQue…), not listed separately as an operator unit.
 
@@ -200,7 +294,7 @@ Newly added high-level ops: Acosh, Asinh, Atanh, Digamma, SinCos, GeGLU, ClampMa
 
 ## Track B · Runtime / AscendCL host API (host execution, does not produce instruction simulation reports)
 
-Systematically recorded: [`runtime/host_api.md`](runtime/host_api.md) —— an inventory of all host APIs from the main.cpp of the units (13 acl* + ACLRT_LAUNCH_KERNEL + platform), including the standard call sequence and grouped descriptions (initialization / device / Stream / memory / kernel launch / platform tiling). These APIs are the scaffolding for launching kernels, do not produce CAModel reports, and their "verification" is implicit in the **118 PASSED** units.
+Systematically recorded: [`runtime/host_api.md`](runtime/host_api.md) —— an inventory of all host APIs from the main.cpp of the units (13 acl* + ACLRT_LAUNCH_KERNEL + platform), including the standard call sequence and grouped descriptions (initialization / device / Stream / memory / kernel launch / platform tiling). These APIs are the scaffolding for launching kernels, do not produce CAModel reports, and their "verification" is implicit in the **172 PASSED** units.
 
 ## Track C · Not covered (needs real driver / multi-NPU / dedicated hardware)
 GE graph engine, operator library aolapi, HCCL, HIXL, ATB, SiP, DVPP —— the per-library "why not covered + future coverage conditions" is in [`notcovered.md`](notcovered.md).

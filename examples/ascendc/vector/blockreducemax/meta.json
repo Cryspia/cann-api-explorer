@@ -1,0 +1,17 @@
+{
+  "name": "BlockReduceMax",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "reduce",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "BLOCKREDUCEMAX",
+  "inputs": {
+    "x": "i%64"
+  },
+  "expect": "block max",
+  "doc_url": "",
+  "pass_marker": "BLOCKREDUCEMAX SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/blockreducemax"
+}

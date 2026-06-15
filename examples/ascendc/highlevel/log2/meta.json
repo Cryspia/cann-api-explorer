@@ -1,0 +1,17 @@
+{
+  "name": "Log2",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "activation",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "LOG2",
+  "inputs": {
+    "x": 8.0
+  },
+  "expect": 3.0,
+  "doc_url": "",
+  "pass_marker": "LOG2 SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/log2"
+}

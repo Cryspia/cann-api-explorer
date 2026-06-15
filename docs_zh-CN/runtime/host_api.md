@@ -2,7 +2,7 @@
 
 # B 线 · Runtime / AscendCL host API 文档
 
-> **定位**：这些是 **host 侧** API（在 CPU 上执行），本身**不产生 AI Core 指令、不产 CAModel 仿真报告**；它们的角色是"**发射核函数的脚手架**"——分配内存、搬数据、起 stream、launch 核函数、同步、回收。A 线每个 example 的 `main.cpp` 都在用它们。本文档系统记录本项目实际用到的 host API（盘点自 85 个单元的 `main.cpp`）。
+> **定位**：这些是 **host 侧** API（在 CPU 上执行），本身**不产生 AI Core 指令、不产 CAModel 仿真报告**；它们的角色是"**发射核函数的脚手架**"——分配内存、搬数据、起 stream、launch 核函数、同步、回收。A 线每个 example 的 `main.cpp` 都在用它们。本文档系统记录本项目实际用到的 host API（盘点自 172 个单元的 `main.cpp`）。
 
 ## 标准调用序列（每个 main.cpp 的骨架）
 
@@ -69,6 +69,6 @@ aclrtDestroyStream(stream); aclrtResetDevice(0); aclFinalize();
 | `platform_ascendc::PlatformAscendCManager::GetInstance()` | 返回 `PlatformAscendC*` | host 侧算 tiling 时取平台信息（核数/UB 大小等）。本项目 TopK（`TopKTilingFunc`）、Conv3D（`Conv3dTiling`）用到。include `tiling/platform/platform_ascendc.h`。|
 
 ## 覆盖边界（best-effort）
-- 上述 13 个 API + 1 个 platform 接口，**已覆盖本项目 85 个单元 main.cpp 用到的全部 host API**。
+- 上述 13 个 API + 1 个 platform 接口，**已覆盖本项目 172 个单元 main.cpp 用到的全部 host API**。
 - 未用到的 Runtime API（aclrtEvent 事件、aclrtMemset、多 stream/context、aclrtMemcpyAsync 等）属同族扩展，按需补；它们同样是 host 脚手架，不产 CAModel 报告。
-- Runtime API 的"验证"= 调用返回 `ACL_SUCCESS` 且配合核函数跑通（已隐含在 82 个 PASSED 单元里）。
+- Runtime API 的"验证"= 调用返回 `ACL_SUCCESS` 且配合核函数跑通（已隐含在 172 个 PASSED 单元里）。

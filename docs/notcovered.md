@@ -7,7 +7,7 @@
 | Library | What it is | Why not covered | Conditions needed for future coverage |
 |----|--------|-----------|-------------------|
 | **GE** (Graph Engine) | compiles, optimizes, schedules, and executes the whole compute graph | a host-side graph compilation/scheduling framework, does not produce AI Core instruction simulation; depends on a full runtime + graph compiler + driver | real NPU + driver + GE runtime; verification is end-to-end graph execution, not instruction simulation |
-| **aolapi / AOL** (operator acceleration library) | precompiled high-level operator library (analogous to cuDNN) | host-side loading/calling of precompiled operator binaries, does not expose simulatable kernel source | real device + operator binary package; calling it is a black box, no instruction-level trace |
+| **aolapi / AOL / aclnn** (operator acceleration library) | precompiled high-level operator library invoked via the `aclnn*` host API (analogous to cuDNN); 350+ ops such as `aclnnConvolution` / `aclnnFlashAttention` | host-side loading/calling of precompiled operator binaries, does not expose simulatable kernel source — a **different layer** from the Ascend C **kernel** APIs of Track A; the `aclnnop` headers ship in a separate operator-library (nnal/opp) package, not in the toolkit | real device + operator binary package; calling it is a black box, no instruction-level trace |
 | **HCCL** (collective communication library) | multi-NPU AllReduce/AllGather/Broadcast/ReduceScatter etc. | needs **multiple NPUs** + inter-card network (HCCS/RoCE), single-machine card-free (no-NPU) simulation has no peer | ≥2 real NPUs + interconnect network; verify collective communication correctness and bandwidth |
 | **HIXL** (heterogeneous interconnect exchange layer) | interconnect and data exchange across devices / heterogeneous units | needs multi-device interconnect hardware, card-free (no-NPU) simulation has no interconnect topology | multi-device interconnect hardware environment |
 | **ATB** (Ascend Transformer Boost) | Transformer high-level acceleration library (attention/FFN/PagedAttention etc. wrappers) | host-side high-level wrapper, internally calls runtime + operator library; does not expose a single simulatable kernel | real device + runtime + operator library; end-to-end model inference verification |
@@ -16,8 +16,8 @@
 
 ## Relationship to the three covered tracks
 
-- **Track A (completed, 82/82)**: Ascend C kernel API —— the sole target of CAModel instruction-level simulation, the core of this project.
-- **Track B (completed)**: Runtime/AscendCL host API —— scaffolding for launching kernels, see [`runtime/host_api.md`](runtime/host_api.md), does not produce instruction reports but its correctness is implicit in the 82 PASSED units of Track A.
+- **Track A (completed, 172/172)**: Ascend C kernel API —— the sole target of CAModel instruction-level simulation, the core of this project.
+- **Track B (completed)**: Runtime/AscendCL host API —— scaffolding for launching kernels, see [`runtime/host_api.md`](runtime/host_api.md), does not produce instruction reports but its correctness is implicit in the 172 PASSED units of Track A.
 - **Track C (this document)**: upper-layer frameworks / hardware-requiring libraries —— explicitly out of scope for card-free (no-NPU) simulation, recording the boundary and future conditions.
 
 > The boundary in one sentence: **what can compile into AI Core instructions and be simulated into a report by CAModel → exhausted by Track A; host scaffolding → recorded by Track B; everything else (upper-layer frameworks / hardware-requiring) → this Track C document explains why it is not covered.**

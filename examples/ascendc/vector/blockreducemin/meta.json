@@ -1,0 +1,17 @@
+{
+  "name": "BlockReduceMin",
+  "lib": "ascendc",
+  "category": "vector",
+  "arity": "reduce",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "BLOCKREDUCEMIN",
+  "inputs": {
+    "x": "i%64"
+  },
+  "expect": "block min",
+  "doc_url": "",
+  "pass_marker": "BLOCKREDUCEMIN SIMULATION PASSED",
+  "dir": "examples/ascendc/vector/blockreducemin"
+}

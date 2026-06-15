@@ -1,0 +1,16 @@
+{
+  "name": "SoftmaxGrad",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "SOFTMAXGRAD",
+  "inputs": {"shape": "[8,64]", "grad": 2.0, "x": 0.015625},
+  "expect": 0.0,
+  "doc_url": "",
+  "pass_marker": "SOFTMAXGRAD SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/softmaxgrad",
+  "note": "High-level softmax backward with Tiling. isFront=false: sum=rowsum(grad*x), y=grad*x-sum*x. Device-side SoftMaxTilingFunc builds the tiling inside the kernel. x=uniform softmax output 1/64, grad=const 2.0 -> sum=2.0, y=0 everywhere."
+}

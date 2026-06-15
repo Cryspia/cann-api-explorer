@@ -1,0 +1,16 @@
+{
+  "name": "WelfordFinalize",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "float",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "WELFORDFINALIZE",
+  "inputs": {"shape": "[abLength=8]", "inputMean": 4.0, "inputVariance": 9.0},
+  "expect": {"outMean": 4.0, "outVar": 9.0},
+  "doc_url": "",
+  "pass_marker": "WELFORDFINALIZE SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/welfordfinalize",
+  "note": "WelfordFinalize(outputMean<float>, outputVariance<float>, inputMean<float>, inputVariance<float>, sharedTmpBuffer, WelfordFinalizePara). Combines per-partition partial mean/var into final mean/var. Para: abLength=headCountLength+tailCountLength (32B aligned). Simplest path tailCountLength=0: outMean=abRec*sum(inputMean), outVar=rRec*sum(inputVariance+rnLength*(inputMean-outMean)^2). All means equal -> diff 0 -> outMean=mean, outVar=var. abRec=rRec=1/abLength. Outputs scalar at index 0."
+}

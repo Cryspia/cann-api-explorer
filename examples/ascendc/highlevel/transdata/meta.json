@@ -1,0 +1,16 @@
+{
+  "name": "TransData",
+  "lib": "ascendc",
+  "category": "highlevel",
+  "arity": "manual",
+  "dtype": "half",
+  "soc_build": "Ascend950PR_9599",
+  "soc_run": "Ascend950",
+  "tag": "TRANSDATA",
+  "inputs": {"ncdhw": "[1,16,1,4,4]", "src": "i+1", "roundtrip": "NCDHW->NDC1HWC0->NCDHW"},
+  "expect": "round trip reproduces src (d[i]=i+1, 256 elems)",
+  "doc_url": "",
+  "pass_marker": "TRANSDATA SIMULATION PASSED",
+  "dir": "examples/ascendc/highlevel/transdata",
+  "note": "adv_api TransData<config,T,U,S>(dst, src, sharedTmpBuffer, TransDataParams{srcLayout,dstLayout}) does 5D NCDHW<->NDC1HWC0/FRACTAL_Z_3D format conversion on 3510. Layouts are CuTe-style MakeLayout(MakeShape,MakeStride). Verified via NCDHW->NDC1HWC0->NCDHW identity round trip."
+}

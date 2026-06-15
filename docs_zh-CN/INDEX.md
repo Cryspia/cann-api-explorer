@@ -11,7 +11,7 @@
 
 ## A 线 · Ascend C 核函数 API(可 cannsim 仿真)
 
-### 矢量计算 vector/ —— ✅ 56/56 仿真通过
+### 矢量计算 vector/ —— ✅ 73/73 仿真通过
 binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,count)`;
 本批 example 统一用 float、8 核、double buffer、SOC 构建 `Ascend950PR_9599` / 仿真 `Ascend950`。
 
@@ -73,8 +73,25 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 | AbsSub | 融合 abs(src0-src1) | [doc](../examples/ascendc/vector/abssub/doc.zh-CN.md) | ✅ |
 | ExpSub | 融合 exp(src0-src1) | [doc](../examples/ascendc/vector/expsub/doc.zh-CN.md) | ✅ |
 | Mull | 整数乘低半部 | [doc](../examples/ascendc/vector/mull/doc.zh-CN.md) | ✅ |
+| BlockReduceSum | 每 32B 块归约求和 | [doc](../examples/ascendc/vector/blockreducesum/doc.zh-CN.md) | ✅ |
+| BlockReduceMax | 每 32B 块归约取最大 | [doc](../examples/ascendc/vector/blockreducemax/doc.zh-CN.md) | ✅ |
+| BlockReduceMin | 每 32B 块归约取最小 | [doc](../examples/ascendc/vector/blockreducemin/doc.zh-CN.md) | ✅ |
+| WholeReduceSum | 每 256B repeat 归约求和 | [doc](../examples/ascendc/vector/wholereducesum/doc.zh-CN.md) | ✅ |
+| WholeReduceMax | 每 256B repeat 归约取最大 | [doc](../examples/ascendc/vector/wholereducemax/doc.zh-CN.md) | ✅ |
+| WholeReduceMin | 每 256B repeat 归约取最小 | [doc](../examples/ascendc/vector/wholereducemin/doc.zh-CN.md) | ✅ |
+| PairReduceSum | 相邻成对求和 | [doc](../examples/ascendc/vector/pairreducesum/doc.zh-CN.md) | ✅ |
+| RepeatReduceSum | 每 repeat 归约求和 | [doc](../examples/ascendc/vector/repeatreducesum/doc.zh-CN.md) | ✅ |
+| Interleave | 两向量交织 | [doc](../examples/ascendc/vector/interleave/doc.zh-CN.md) | ✅ |
+| DeInterleave | 解交织成两向量 | [doc](../examples/ascendc/vector/deinterleave/doc.zh-CN.md) | ✅ |
+| Gatherb | 块级 gather | [doc](../examples/ascendc/vector/gatherb/doc.zh-CN.md) | ✅ |
+| Compares | 向量-标量比较出 mask（CompareScalar 的规范替代） | [doc](../examples/ascendc/vector/compares/doc.zh-CN.md) | ✅ |
+| Truncate | 截断取整保持 dtype（区别于数学 Trunc） | [doc](../examples/ascendc/vector/truncate/doc.zh-CN.md) | ✅ |
+| AddReluCast | 融合 relu(a+b)+量化转换 | [doc](../examples/ascendc/vector/addrelucast/doc.zh-CN.md) | ✅ |
+| SubReluCast | 融合 relu(a-b)+量化转换 | [doc](../examples/ascendc/vector/subrelucast/doc.zh-CN.md) | ✅ |
+| AddDeqRelu | relu((a+b)*deqScale) | [doc](../examples/ascendc/vector/adddeqrelu/doc.zh-CN.md) | ✅ |
+| CastDequant | int32→half 按 deqScale 反量化 | [doc](../examples/ascendc/vector/castdequant/doc.zh-CN.md) | ✅ |
 
-矢量类 **56/56 通过**，覆盖 binary/unary/scalar/cast/reduce/bitbin/bitun + 手写掩码(Compare/CompareScalar+Select) + Transpose + 数据重排(Duplicate/CreateVecIndex/Gather/Scatter/Brcb) + 融合(Axpy/MulCast/FusedMulAdd/MulAddDst/MulAddRelu/AddRelu/SubRelu/AbsSub/ExpSub) + 激活变体(PRelu/LeakyRelu) + 标量/位运算(ShiftLeft/ShiftRight/Ands/Ors/MulsCast/Mull) + 原子(AtomicAdd)。
+矢量类 **73/73 通过**，覆盖 binary/unary/scalar/cast/reduce/bitbin/bitun + 手写掩码(Compare/CompareScalar+Select) + Transpose + 数据重排(Duplicate/CreateVecIndex/Gather/Scatter/Brcb) + 融合(Axpy/MulCast/FusedMulAdd/MulAddDst/MulAddRelu/AddRelu/SubRelu/AbsSub/ExpSub) + 激活变体(PRelu/LeakyRelu) + 标量/位运算(ShiftLeft/ShiftRight/Ands/Ors/MulsCast/Mull) + 原子(AtomicAdd) + 归约粒度变体(BlockReduceSum/Max/Min、WholeReduceSum/Max/Min、PairReduceSum、RepeatReduceSum) + 数据重排(Interleave/DeInterleave、Gatherb) + 向量-标量比较(Compares) + 截断取整(Truncate) + relu-cast/dequant 变体(AddReluCast/SubReluCast/AddDeqRelu/CastDequant)。
 
 ### 标量计算 scalar/ —— ✅ 1/1 仿真通过
 
@@ -91,7 +108,7 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 
 > 标量 / 搬运 / 内存资源类的其余 API（ScalarCast、Copy、TPipe/TQue/TBuf/TBufPool 等）见下文「A 线未覆盖 API 清单」统一记录。
 
-### 高阶 API highlevel/ —— ✅ 57/57 仿真通过（5 激活 + 28 数学 + 6 归一化 + 7 逻辑/比较 + 6 逐元素/工具 + TopK/Sort/Pad/Broadcast + LogSoftmax）
+### 高阶 API highlevel/ —— ✅ 94/94 仿真通过（5 激活 + 32 数学 + 6 归一化 + 7 逻辑/比较 + 6 逐元素/工具 + TopK/Sort/Pad/Broadcast/UnPad + LogSoftmax + 2 门控 + 2 adv-归约 + 1 索引 + 3 量化 + 多策略 Quantize + 5 归一化扩展 + WelfordUpdate + 2 softmax-反向/flash + SimpleSoftMax/SoftmaxFlashV3/SoftmaxGradFront + 4 adv-归约新家族 + 3 选择/格式 + 5 逻辑/位运算变体）
 
 **激活类**（简单 `(dst,src,count)`，免 Tiling，`#include "lib/activation/<op>.h"`）:
 
@@ -102,11 +119,14 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 | Silu | activation | [doc](../examples/ascendc/highlevel/silu/doc.zh-CN.md) | ✅ |
 | Swish | activation | [doc](../examples/ascendc/highlevel/swish/doc.zh-CN.md) | ✅ |
 | GeGLU | 门控 GLU 激活，gelu(a)*b | [doc](../examples/ascendc/highlevel/geglu/doc.zh-CN.md) | ✅ |
+| SwiGLU | 门控 GLU 激活，x1*silu_beta(x2) | [doc](../examples/ascendc/highlevel/swiglu/doc.zh-CN.md) | ✅ |
+| ReGLU | 门控 GLU 激活，x1*relu(x2) | [doc](../examples/ascendc/highlevel/reglu/doc.zh-CN.md) | ✅ |
 
-**高阶数学类** adv_api/math（免 tmp `(dst,src,count)` / `(dst,src0,src1,count)` 重载,`#include "lib/math/<op>.h"`）—— ✅ 25/25:
-- 一元(activation arity, 24)：Sin/Cos/Tan/Tanh/Sinh/Cosh/Asin/Acos/Atan/Asinh/Acosh/Atanh/Erf/Erfc/Floor/Ceil/Round/Rint/Trunc/Sign/Frac/Log/Lgamma/Digamma
+**高阶数学类** adv_api/math（免 tmp `(dst,src,count)` / `(dst,src0,src1,count)` 重载,`#include "lib/math/<op>.h"`）—— ✅ 29/29:
+- 一元(activation arity, 28)：Sin/Cos/Tan/Tanh/Sinh/Cosh/Asin/Acos/Atan/Asinh/Acosh/Atanh/Erf/Erfc/Floor/Ceil/Round/Rint/Trunc/Sign/Frac/Log/Log2/Log10/Lgamma/Digamma/FasterGelu/FasterGeluV2
 - 二元(binary_act arity, 3)：Power(2³=8)/Fmod(7%3=1)/Hypot(3,4=5)
 - 双输出(1)：SinCos（单 src → 同时输出 sin 与 cos）
+（Log2=以 2 为底对数，Log10=以 10 为底对数；FasterGelu/FasterGeluV2=更快的 gelu 近似。）
 （Asinh=反双曲正弦，Acosh=反双曲余弦，Atanh=反双曲正切，Digamma=ψ(x) 即 Γ 的对数导数；各单元 doc 见 `examples/ascendc/highlevel/<op>/doc.zh-CN.md`）。
 
 **逻辑 / 比较类**（布尔输出逐元素，`#include "lib/math/<op>.h"`）—— ✅ 7/7:
@@ -132,6 +152,76 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 | Where | 条件选择(mask?a:b) | [doc](../examples/ascendc/highlevel/where/doc.zh-CN.md) | ✅ |
 | CumSum | 前缀和(沿轴累加) | [doc](../examples/ascendc/highlevel/cumsum/doc.zh-CN.md) | ✅ |
 
+**adv_api 归约类**（按行 last-axis 归约，带 `SumParams`/`MeanParams` + tmp，区别于 vector 的 ReduceSum/Max/Min）—— ✅ 2/2:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| Mean | 按行 last-axis 均值(MeanParams + tmp) | [doc](../examples/ascendc/highlevel/mean/doc.zh-CN.md) | ✅ |
+| Sum | 按行 last-axis 求和(SumParams + tmp) | [doc](../examples/ascendc/highlevel/sum/doc.zh-CN.md) | ✅ |
+
+**索引生成类** —— ✅ 1/1:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| ArithProgression | 即 Arange，dst[i]=first+i*diff | [doc](../examples/ascendc/highlevel/arithprogression/doc.zh-CN.md) | ✅ |
+
+**量化类** —— ✅ 4/4:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| AscendQuant | dst int8 = round(src*scale+offset) | [doc](../examples/ascendc/highlevel/ascendquant/doc.zh-CN.md) | ✅ |
+| AscendDequant | dst = src_int32 * deqScale(tensor) | [doc](../examples/ascendc/highlevel/ascenddequant/doc.zh-CN.md) | ✅ |
+| AscendAntiQuant | dst = scale*(src_int8+offset) | [doc](../examples/ascendc/highlevel/ascendantiquant/doc.zh-CN.md) | ✅ |
+| Quantize | 带 QuantizeConfig 的多策略量化（区别于 AscendQuant） | [doc](../examples/ascendc/highlevel/quantize/doc.zh-CN.md) | ✅ |
+
+**归一化扩展类**（前向后半段 / Welford 在线更新+合并 / 反向梯度 / dropout）—— ✅ 6/6:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| Normalize | 给定 mean/var 的 LayerNorm 后半段 | [doc](../examples/ascendc/highlevel/normalize/doc.zh-CN.md) | ✅ |
+| WelfordUpdate | Welford 在线更新步 | [doc](../examples/ascendc/highlevel/welfordupdate/doc.zh-CN.md) | ✅ |
+| WelfordFinalize | 合并分块均值/方差 | [doc](../examples/ascendc/highlevel/welfordfinalize/doc.zh-CN.md) | ✅ |
+| LayerNormGrad | 反向 outputPdX / resForGamma | [doc](../examples/ascendc/highlevel/layernormgrad/doc.zh-CN.md) | ✅ |
+| LayerNormGradBeta | 反向 outputPdGamma / outputPdBeta | [doc](../examples/ascendc/highlevel/layernormgradbeta/doc.zh-CN.md) | ✅ |
+| DropOut | 确定性，dst=(1/keepProb)*mask*src（caller 提供 mask） | [doc](../examples/ascendc/highlevel/dropout/doc.zh-CN.md) | ✅ |
+
+**softmax 反向 / flash 类**（参考 cann-on-gpu 算子库交叉比对）—— ✅ 5/5:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| SoftmaxGrad | softmax 反向，y=grad*x - rowsum(grad*x)*x | [doc](../examples/ascendc/highlevel/softmaxgrad/doc.zh-CN.md) | ✅ |
+| SoftmaxGradFront | softmax 反向前半段 | [doc](../examples/ascendc/highlevel/softmaxgradfront/doc.zh-CN.md) | ✅ |
+| SoftmaxFlashV2 | flash-attention 在线 softmax（max=rowmax，y=exp(x-max) 未归一，sum=rowsum(y)） | [doc](../examples/ascendc/highlevel/softmaxflashv2/doc.zh-CN.md) | ✅ |
+| SoftmaxFlashV3 | flash-attention v3 在线 softmax | [doc](../examples/ascendc/highlevel/softmaxflashv3/doc.zh-CN.md) | ✅ |
+| SimpleSoftMax | 给定 max/sum 归一化 | [doc](../examples/ascendc/highlevel/simplesoftmax/doc.zh-CN.md) | ✅ |
+
+**adv_api 归约新家族类**（Any/All/Prod/XorSum，区别于旧的 vector ReduceSum/Max/Min）—— ✅ 4/4:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| ReduceXorSum | int16 Σ(a^b) | [doc](../examples/ascendc/highlevel/reducexorsum/doc.zh-CN.md) | ✅ |
+| ReduceAny | 任一真 → 1 | [doc](../examples/ascendc/highlevel/reduceany/doc.zh-CN.md) | ✅ |
+| ReduceAll | 全真 → 1 | [doc](../examples/ascendc/highlevel/reduceall/doc.zh-CN.md) | ✅ |
+| ReduceProd | float 连乘 | [doc](../examples/ascendc/highlevel/reduceprod/doc.zh-CN.md) | ✅ |
+
+**选择 / 格式类** —— ✅ 3/3:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| SelectWithBytesMask | 字节掩码选择 src0 / 标量 | [doc](../examples/ascendc/highlevel/selectwithbytesmask/doc.zh-CN.md) | ✅ |
+| ConfusionTranspose | attention reshape+transpose（TransposeType + ConfusionTransposeTiling） | [doc](../examples/ascendc/highlevel/confusiontranspose/doc.zh-CN.md) | ✅ |
+| TransData | NCDHW↔NDC1HWC0 / FRACTAL_Z_3D 分形格式转换 | [doc](../examples/ascendc/highlevel/transdata/doc.zh-CN.md) | ✅ |
+
+**tensor-标量逻辑 + 位运算 count 模式变体类**（adv_api count 入口，与 vector And/Or/Not 同质）—— ✅ 5/5:
+
+| API | 形状 | doc | 状态 |
+|-----|------|-----|------|
+| LogicalAnds | tensor-标量逻辑与（dst=bool） | [doc](../examples/ascendc/highlevel/logical_ands/doc.zh-CN.md) | ✅ |
+| LogicalOrs | tensor-标量逻辑或（dst=bool） | [doc](../examples/ascendc/highlevel/logical_ors/doc.zh-CN.md) | ✅ |
+| BitwiseAnd | int16 按位与（adv_api count 入口） | [doc](../examples/ascendc/highlevel/bitwise_and/doc.zh-CN.md) | ✅ |
+| BitwiseOr | int16 按位或（adv_api count 入口） | [doc](../examples/ascendc/highlevel/bitwise_or/doc.zh-CN.md) | ✅ |
+| BitwiseNot | int16 按位非（adv_api count 入口） | [doc](../examples/ascendc/highlevel/bitwise_not/doc.zh-CN.md) | ✅ |
+
 **带 Tiling 的归一化类**（突破点:两种 kernel 内 tiling 技术,免 host tiling 框架）:
 
 | API | tiling 来源 | doc | 状态 |
@@ -151,6 +241,7 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 | TopK | host `TopKTilingFunc` 算 `TopkTiling` → GM 传入(另链 `libgraph_base.so`) | [doc](../examples/ascendc/highlevel/topk/doc.zh-CN.md) | ✅ |
 | Sort | 免 tiling(count 模式,**升序**,idx 跟随) | [doc](../examples/ascendc/highlevel/sort/doc.zh-CN.md) | ✅ |
 | Pad | `PadTiling` 手填 3 字段(srcHeight/srcWidth/srcOriWidth) | [doc](../examples/ascendc/highlevel/pad/doc.zh-CN.md) | ✅ |
+| UnPad | `UnPadTiling` 手填，Pad 逆操作 | [doc](../examples/ascendc/highlevel/unpad/doc.zh-CN.md) | ✅ |
 | Broadcast | device 端 `GetBroadcastTilingInfo` 在核内算 | [doc](../examples/ascendc/highlevel/broadcast/doc.zh-CN.md) | ✅ |
 
 **Cube 矩阵乘** cube/ —— host tiling 框架打通:
@@ -164,12 +255,16 @@ binary=`(dst,src0,src1,count)`,unary=`(dst,src,count)`,scalar=`(dst,src,scalar,c
 
 ### A 线 API 覆盖收尾（已补做 / 已查明不可用 / 仍未覆盖）
 
-已覆盖 **116** 个单元。下表交代曾在「未覆盖清单」里、本轮逐一处置的结果。
+已覆盖 **172** 个单元。下表交代曾在「未覆盖清单」里、本轮逐一处置的结果。
 
 **① 已补做成单元（✅，见上文各段）**
 Compare、GatherMask、Axpy、MulCast（矢量计算）；AtomicAdd（原子）；ScalarCast（标量）。
 新增融合 / 标量 / 位运算（矢量计算）：PRelu、LeakyRelu、ShiftLeft、ShiftRight、Ands、Ors、AddRelu、SubRelu、MulsCast、FusedMulAdd、MulAddDst、MulAddRelu、AbsSub、ExpSub、Mull。
 新增高阶算子：Acosh、Asinh、Atanh、Digamma、SinCos、GeGLU、ClampMax、ClampMin、Fma、Xor、LogicalAnd、LogicalOr、LogicalXor、LogicalNot、IsNan、IsInf、IsFinite、Where、CumSum。
+新增 adv_api 计算子库：门控激活 SwiGLU、ReGLU；adv_api 归约 Mean、Sum（按行 last-axis）；索引生成 ArithProgression；量化 AscendQuant、AscendDequant、AscendAntiQuant；归一化扩展 Normalize、WelfordFinalize、LayerNormGrad、LayerNormGradBeta、DropOut。
+参考 cann-on-gpu 算子库交叉比对后补齐的 adv_api kernel 原语：softmax 反向 / flash-attention 在线 softmax SoftmaxGrad、SoftmaxFlashV2；adv_api 归约新家族 ReduceAny、ReduceAll、ReduceProd、ReduceXorSum（区别于旧的 vector ReduceSum/Max/Min）；字节掩码选择 SelectWithBytesMask；格式转换 ConfusionTranspose、TransData；tensor-标量逻辑 + 位运算 count 模式变体 LogicalAnds、LogicalOrs、BitwiseAnd、BitwiseOr、BitwiseNot。
+梳理本地 AscendC kernel 头后补齐的原语：归约粒度变体 BlockReduceSum/Max/Min（每 32B 块）、WholeReduceSum/Max/Min（每 256B repeat）、PairReduceSum（相邻成对）、RepeatReduceSum；数据重排 Interleave、DeInterleave、Gatherb（块级 gather）；向量-标量比较 Compares（CompareScalar 的规范替代）；截断取整 Truncate（保持 dtype，区别于数学 Trunc）；对数 Log2、Log10；faster-gelu FasterGelu、FasterGeluV2；softmax 家族 SimpleSoftMax、SoftmaxFlashV3、SoftmaxGradFront；UnPad（Pad 逆操作）；WelfordUpdate（在线更新步）；多策略量化 Quantize（QuantizeConfig）；relu-cast/dequant 变体 AddReluCast、SubReluCast、AddDeqRelu、CastDequant。
+以下为废弃别名，已被规范名覆盖（doc-only，不计数）：FusedMulsCast=MulsCast、FusedAbsSub=AbsSub、FusedExpSub=ExpSub、FusedMulAddRelu=MulAddRelu、CastDeq=CastDequant。
 
 **② 已尝试、查明本环境不可用（🚫，代码/反例留存，meta.json.unsupported 不计入通过数）**
 | API | 头 | 查明结论 |
@@ -182,8 +277,6 @@ Compare、GatherMask、Axpy、MulCast（矢量计算）；AtomicAdd（原子）�
 **③ 仍未覆盖（与已覆盖项同质 / 需特殊参数 / 辅助设施，按需补）**
 | API | 头 | 不补原因 |
 |-----|----|---------|
-| 量化转换/融合（CastDequant/CastDeq/AddReluCast/AddDeqRelu） | vec_vconv | 量化转换需 deqScale 参数；基础 Cast + 普通 AddRelu 已覆盖非量化语义 |
-| FusedMulsCast | vec_vconv | 乘标量+量化转换变体；普通 MulsCast 已覆盖非量化形态 |
 | Philox 随机生成 | rand | key/counter 伪随机生成，无可对照的参考数值输出 |
 | BilinearInterpolation | vec_bilinearinterpolation | 参数巨多（offset/hRepeat/vRepeat/tmp），无 count 简化模式 |
 | Gemm（GetGemmTiling） | gemm | 与 Matmul 同属 Cube+host-tiling，已由 Matmul 代表 |
@@ -192,6 +285,7 @@ Compare、GatherMask、Axpy、MulCast（矢量计算）；AtomicAdd（原子）�
 | DataCacheCleanAndInvalid / Preload | cache | cache 管理辅助，已在 SyncAll/IB 内部间接用到 dcci |
 | DumpTensor / PRINTF | dump_tensor | kernel 内调试输出，非数值算子 |
 | ListTensorDesc / SetSysWorkSpacePtr | list_tensor / swap_mem | 描述符 / workspace 指针，辅助基础设施 |
+| Std | adv_api/std | 非算子 —— `AscendC::Std` 是 C++ 标准库 shim 命名空间（algorithm/cmath/type_traits 等纯编译期模板，无 kernel / tensor I/O）；如实 skip（既非 todo 也非失败）。 |
 
 > 说明：**memory 资源类**（TPipe/TQue/TBuf/TBufPool）是基础设施，已内嵌在**每一个** kernel 中使用（InitBuffer/AllocTensor/EnQue…），不单列为算子单元。
 
@@ -200,7 +294,7 @@ Compare、GatherMask、Axpy、MulCast（矢量计算）；AtomicAdd（原子）�
 
 ## B 线 · Runtime / AscendCL host API(host 执行,不产指令仿真报告)
 
-已系统记录：[`runtime/host_api.md`](runtime/host_api.md) —— 盘点自各单元 main.cpp 的全部 host API（13 个 acl* + ACLRT_LAUNCH_KERNEL + platform），含标准调用序列与分组说明（初始化/设备/Stream/内存/核函数发射/平台 tiling）。这些 API 是发射核函数的脚手架，不产 CAModel 报告，其"验证"已隐含在 **118 个 PASSED** 单元中。
+已系统记录：[`runtime/host_api.md`](runtime/host_api.md) —— 盘点自各单元 main.cpp 的全部 host API（13 个 acl* + ACLRT_LAUNCH_KERNEL + platform），含标准调用序列与分组说明（初始化/设备/Stream/内存/核函数发射/平台 tiling）。这些 API 是发射核函数的脚手架，不产 CAModel 报告，其"验证"已隐含在 **172 个 PASSED** 单元中。
 
 ## C 线 · 不覆盖(需真实驱动/多卡/专用硬件)
 GE 图引擎、算子库 aolapi、HCCL、HIXL、ATB、SiP、DVPP —— 逐库的「为何不覆盖 + 将来覆盖条件」见 [`notcovered.md`](notcovered.md)。
