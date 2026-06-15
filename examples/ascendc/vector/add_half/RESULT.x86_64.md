@@ -5,7 +5,7 @@
 - Build SOC: `Ascend950PR_9599`  Run SOC: `Ascend950`
 - PASS marker: `ADD_HALF SIMULATION PASSED`
 - Instruction count: 336
-- Execution time (ns): 2449.7
+- Execution time (ns): 2360.0
 
 ## record log (tail)
 ```
@@ -13,46 +13,46 @@ INFO:root:CannProf successfully finished kernel profiling, reports are ready for
 INFO:root:====================
 INFO:root:Report INFO
 INFO:root:Analysis type: hotspots
-INFO:root:Output folder: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271
-INFO:root:Generated Architecture Diagrams: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports
-INFO:root:Chrome Tracing reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports
-INFO:root:Critical path reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports
-INFO:root:Issue Queue reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports
-INFO:root:Scalar IPC dynamic reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports
-INFO:root:Vector IPC dynamic reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports
-INFO:root:Instruction Cache reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports
+INFO:root:Output folder: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023
+INFO:root:Generated Architecture Diagrams: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports
+INFO:root:Chrome Tracing reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports
+INFO:root:Critical path reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports
+INFO:root:Issue Queue reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports
+INFO:root:Scalar IPC dynamic reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports
+INFO:root:Vector IPC dynamic reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports
+INFO:root:Instruction Cache reports: /home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports
 INFO:root:====================
 INFO:root:Functions INFO
 INFO:root:Kernel name: kernel
 INFO:root:Total number of instructions: 0
 INFO:root:Total number of instruction executions: 336
-INFO:root:Execution time (ns): 2449.7
+INFO:root:Execution time (ns): 2360.0
 INFO:root:====================
-[2026-06-12 04:12:21] [INFO] Report generation completed successfully.
+[2026-06-15 04:41:54] [INFO] Report generation completed successfully.
 +==========================================================================+
 │ (Report) Cannsim auto generate report successed!                         │
 +==========================================================================+
 Cannsim auto generate report saved at:
- └─/home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260612041122_sim_exe/report
+ └─/home/ubuntu/programs/cann-api-explorer/examples/ascendc/vector/add_half/report/cannsim_20260615044059_sim_exe/report
 ```
 
 ## Report artifacts
 ```
-cannsim_20260612041122_sim_exe/cannsim.log
-cannsim_20260612041122_sim_exe/instr.bin
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_operator.svg
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_request.svg
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/aicore_memory_sim_view_number_of_requests.svg
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/aicore_utilization.json
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/core_0_critical_path_report_0.json
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/core_0_icache_report.html
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/core_0_scalar_ipc_dynamic_report.html
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/core_0_tracing_report_0.json
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/kernel_0_reports/instruction_duration_distribution.html
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/perf_log.dump
-cannsim_20260612041122_sim_exe/report/results_20260612_121220623271/runner.py.log
-cannsim_20260612041122_sim_exe/route_table.txt
-cannsim_20260612041122_sim_exe/rtb_debug.txt
-cannsim_20260612041122_sim_exe/.soc-version
+cannsim_20260615044059_sim_exe/cannsim.log
+cannsim_20260615044059_sim_exe/instr.bin
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_operator.svg
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/aicore_memory_sim_view_bandwidth_per_request.svg
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/aicore_memory_sim_view_number_of_requests.svg
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/aicore_utilization.json
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/core_0_critical_path_report_0.json
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/core_0_icache_report.html
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/core_0_scalar_ipc_dynamic_report.html
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/core_0_tracing_report_0.json
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/kernel_0_reports/instruction_duration_distribution.html
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/perf_log.dump
+cannsim_20260615044059_sim_exe/report/results_20260615_124154214023/runner.py.log
+cannsim_20260615044059_sim_exe/route_table.txt
+cannsim_20260615044059_sim_exe/rtb_debug.txt
+cannsim_20260615044059_sim_exe/.soc-version
 record.log
 ```
