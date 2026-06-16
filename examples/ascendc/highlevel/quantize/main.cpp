@@ -1,5 +1,7 @@
 /* Host: Quantize (PER_TENSOR). src=2.0, scale=2.0, offset=1.0
  * -> dst = round(2*2 + 1) = 5 (int8). */
+#include <cstdlib>
+#include <cstdio>
 #include <cstdio>
 #include <cstdint>
 #include "acl/acl.h"
@@ -25,7 +27,9 @@ int32_t main()
     ST *xH = nullptr; DT *zH = nullptr;
     CHECK_ACL(aclrtMallocHost((void **)&xH, sBytes));
     CHECK_ACL(aclrtMallocHost((void **)&zH, dBytes));
-    for (int i = 0; i < N; i++) { xH[i] = (ST)2.0; zH[i] = (DT)0; }
+    bool golden=false;
+    { const char*gx=getenv("GOLDEN_IN_X"); if(gx){ FILE*fx=fopen(gx,"rb"); if(fx&&fread(xH,sizeof(float),N,fx)==(size_t)N) golden=true; if(fx)fclose(fx);} }
+    if(!golden) for (int i = 0; i < N; i++) { xH[i] = (ST)2.0; zH[i] = (DT)0; }
 
     uint8_t *xD = nullptr, *zD = nullptr;
     CHECK_ACL(aclrtMalloc((void **)&xD, sBytes, ACL_MEM_MALLOC_HUGE_FIRST));
@@ -35,6 +39,7 @@ int32_t main()
     ACLRT_LAUNCH_KERNEL(k_custom)(1, stream, xD, zD);
     CHECK_ACL(aclrtSynchronizeStream(stream));
     CHECK_ACL(aclrtMemcpy(zH, dBytes, zD, dBytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if(golden){ const char*go=getenv("GOLDEN_OUT"); if(go){ FILE*fo=fopen(go,"wb"); if(fo){ fwrite(zH,sizeof(int8_t),N,fo); fclose(fo); printf("[GOLDEN] dumped %d int8\n",N);} } }
 
     const DT expect = (DT)5;
     int errors = 0;
