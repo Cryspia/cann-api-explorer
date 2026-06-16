@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cmath>
+#include <cstdlib>   // getenv (golden bridge)
 #include "acl/acl.h"
 #include "aclrtlaunch_k_custom.h"
 
@@ -41,6 +42,12 @@ int32_t main()
 
     for (int32_t i = 0; i < bsh; i++) xHost[i] = 2.0f;
     for (int32_t i = 0; i < h; i++) gHost[i] = 1.0f;
+    bool golden = false;
+    { const char *gx = getenv("GOLDEN_IN_X"), *gg = getenv("GOLDEN_IN_G");
+      if (gx) { FILE *fx = fopen(gx, "rb");
+        if (fx && fread(xHost, sizeof(float), bsh, fx) == (size_t)bsh) golden = true;
+        if (fx) fclose(fx); }
+      if (golden && gg) { FILE *f = fopen(gg, "rb"); if (f) { (void)!fread(gHost, sizeof(float), h, f); fclose(f); } } }
     CHECK_ACL(aclrtMemcpy(xDev, xBytes, xHost, xBytes, ACL_MEMCPY_HOST_TO_DEVICE));
     CHECK_ACL(aclrtMemcpy(gDev, gBytes, gHost, gBytes, ACL_MEMCPY_HOST_TO_DEVICE));
 
@@ -49,9 +56,12 @@ int32_t main()
 
     CHECK_ACL(aclrtMemcpy(zHost, xBytes, zDev, xBytes, ACL_MEMCPY_DEVICE_TO_HOST));
 
+    if (golden) { const char *go = getenv("GOLDEN_OUT");
+      if (go) { FILE *fo = fopen(go, "wb"); if (fo) { fwrite(zHost, sizeof(float), bsh, fo); fclose(fo); printf("[GOLDEN] dumped %d floats to %s\n", bsh, go); } } }
+
     const float expect = 1.0f;
     int errors = 0;
-    for (int32_t i = 0; i < bsh; i++) {
+    for (int32_t i = 0; !golden && i < bsh; i++) {
         if (fabsf(zHost[i] - expect) > 5e-3f) {
             if (errors < 5) printf("[CHECK] idx %d = %f (expect %f)\n", i, zHost[i], expect);
             errors++;

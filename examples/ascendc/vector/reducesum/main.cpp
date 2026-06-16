@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cmath>
+#include <cstdlib>   // getenv (golden bridge)
 #include "acl/acl.h"
 #include "aclrtlaunch_k_custom.h"
 
@@ -36,6 +37,11 @@ int32_t main()
     CHECK_ACL(aclrtMalloc((void **)&zDev, byteSize, ACL_MEM_MALLOC_HUGE_FIRST));
 
     for (int32_t i = 0; i < elem; i++) xHost[i] = (float)(1.0);
+    bool golden = false;
+    { const char *gx = getenv("GOLDEN_IN_X");
+      if (gx) { FILE *fx = fopen(gx, "rb");
+        if (fx && fread(xHost, sizeof(float), elem, fx) == (size_t)elem) golden = true;
+        if (fx) fclose(fx); } }
     CHECK_ACL(aclrtMemcpy(xDev, byteSize, xHost, byteSize, ACL_MEMCPY_HOST_TO_DEVICE));
 
     ACLRT_LAUNCH_KERNEL(k_custom)(blockDim, stream, xDev, zDev);
@@ -43,10 +49,13 @@ int32_t main()
 
     CHECK_ACL(aclrtMemcpy(zHost, byteSize, zDev, byteSize, ACL_MEMCPY_DEVICE_TO_HOST));
 
+    if (golden) { const char *go = getenv("GOLDEN_OUT");
+      if (go) { FILE *fo = fopen(go, "wb"); if (fo) { fwrite(zHost, sizeof(float), 1, fo); fclose(fo); printf("[GOLDEN] dumped 1 float to %s\n", go); } } }
+
     const float expect = (float)(256.0);
     int errors = 0;
     float v = zHost[0];                   // the reduction result is in dst[0]
-    if (fabsf(v - expect) > 1e-3f) {
+    if (!golden && fabsf(v - expect) > 1e-3f) {
         printf("[CHECK] dst[0] = %f (expect %f)\n", v, expect);
         errors++;
     }

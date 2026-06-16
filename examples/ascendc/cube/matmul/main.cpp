@@ -19,6 +19,20 @@
         }                                                                              \
     } while (0)
 
+
+// golden bridge: minimal round-to-nearest fp32->fp16 (inputs are small, no subnormals/overflow)
+#include <cstdlib>
+static uint16_t f2h(float f){
+    uint32_t x; memcpy(&x, &f, 4);
+    uint32_t sign = (x >> 16) & 0x8000u; int32_t exp = (int32_t)((x >> 23) & 0xff) - 127 + 15;
+    uint32_t mant = x & 0x7fffffu;
+    if (exp <= 0) return (uint16_t)sign;
+    if (exp >= 31) return (uint16_t)(sign | 0x7c00u);
+    uint16_t h = (uint16_t)(sign | ((uint32_t)exp << 10) | (mant >> 13));
+    if (mant & 0x1000u) h++;
+    return h;
+}
+
 int32_t main()
 {
     const int32_t M = 64, N = 64, K = 64;
@@ -64,6 +78,18 @@ int32_t main()
 
     for (int i = 0; i < M * K; i++) aHost[i] = 0x3C00;  // half 1.0
     for (int i = 0; i < K * N; i++) bHost[i] = 0x3C00;
+    bool golden = false;
+    { const char *gx = getenv("GOLDEN_IN_X"), *gy = getenv("GOLDEN_IN_Y");
+      if (gx && gy) {
+        float *fa = (float*)malloc((size_t)M*K*4), *fb = (float*)malloc((size_t)K*N*4);
+        FILE *fx = fopen(gx, "rb"), *fy = fopen(gy, "rb");
+        if (fx && fy && fread(fa, 4, (size_t)M*K, fx) == (size_t)M*K
+                     && fread(fb, 4, (size_t)K*N, fy) == (size_t)K*N) {
+          for (int i = 0; i < M*K; i++) aHost[i] = f2h(fa[i]);
+          for (int i = 0; i < K*N; i++) bHost[i] = f2h(fb[i]);
+          golden = true;
+        }
+        if (fx) fclose(fx); if (fy) fclose(fy); free(fa); free(fb); } }
     memcpy(tilingHost, &tiling, tilingBytes);
 
     uint8_t *aDev = nullptr, *bDev = nullptr, *cDev = nullptr, *wsDev = nullptr, *tilingDev = nullptr;
@@ -82,9 +108,12 @@ int32_t main()
 
     CHECK_ACL(aclrtMemcpy(cHost, cBytes, cDev, cBytes, ACL_MEMCPY_DEVICE_TO_HOST));
 
+    if (golden) { const char *go = getenv("GOLDEN_OUT");
+      if (go) { FILE *fo = fopen(go, "wb"); if (fo) { fwrite(cHost, sizeof(float), (size_t)M*N, fo); fclose(fo); printf("[GOLDEN] dumped %d floats to %s\n", M*N, go); } } }
+
     const float expect = (float)K;   // 64
     int errors = 0;
-    for (int i = 0; i < M * N; i++) {
+    for (int i = 0; !golden && i < M * N; i++) {
         if (fabsf(cHost[i] - expect) > 1e-2f) {
             if (errors < 5) printf("[CHECK] idx %d = %f (expect %f)\n", i, cHost[i], expect);
             errors++;

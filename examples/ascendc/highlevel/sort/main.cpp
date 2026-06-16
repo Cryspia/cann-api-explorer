@@ -4,6 +4,7 @@
  */
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>   // getenv (golden bridge)
 #include "acl/acl.h"
 #include "aclrtlaunch_k_custom.h"
 
@@ -34,6 +35,9 @@ int32_t main()
     CHECK_ACL(aclrtMallocHost((void **)&ziH, iBytes));
     // Diagnostic: reversed input [31..0], idx=[0..31]. Distinguishes descending/ascending/no-op.
     for (int i = 0; i < N; i++) { xH[i] = (float)(N - 1 - i); iH[i] = (uint32_t)i; }
+    bool golden = false;
+    { const char *gx = getenv("GOLDEN_IN_X");
+      if (gx) { FILE *fx = fopen(gx, "rb"); if (fx && fread(xH, sizeof(float), N, fx) == (size_t)N) golden = true; if (fx) fclose(fx); } }
 
     uint8_t *xD = nullptr, *iD = nullptr, *zD = nullptr, *ziD = nullptr;
     CHECK_ACL(aclrtMalloc((void **)&xD, vBytes, ACL_MEM_MALLOC_HUGE_FIRST));
@@ -47,11 +51,12 @@ int32_t main()
     CHECK_ACL(aclrtSynchronizeStream(stream));
 
     CHECK_ACL(aclrtMemcpy(zH, vBytes, zD, vBytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if (golden) { const char *go = getenv("GOLDEN_OUT"); if (go) { FILE *fo = fopen(go,"wb"); if (fo){ fwrite(zH,sizeof(float),N,fo); fclose(fo);} } }
     CHECK_ACL(aclrtMemcpy(ziH, iBytes, ziD, iBytes, ACL_MEMCPY_DEVICE_TO_HOST));
 
     // Sort is ascending: input val=[31..0]/idx=[0..31] -> output val[i]=i, idx[i]=N-1-i (original position of value i).
     int errors = 0;
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; !golden && i < N; i++) {
         float ev = (float)i;
         uint32_t ei = (uint32_t)(N - 1 - i);
         if (zH[i] != ev || ziH[i] != ei) {

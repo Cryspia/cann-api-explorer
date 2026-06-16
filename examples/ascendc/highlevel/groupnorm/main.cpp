@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cmath>
+#include <cstdlib>   // getenv (golden bridge)
 #include "acl/acl.h"
 #include "aclrtlaunch_k_custom.h"
 
@@ -42,6 +43,11 @@ int32_t main()
 
     for (int i = 0; i < TOTAL; i++) xHost[i] = 5.0f;
     for (int i = 0; i < C; i++) { gHost[i] = 1.0f; bHost[i] = 0.0f; }
+    bool golden = false;
+    { const char *gx=getenv("GOLDEN_IN_X"),*gg=getenv("GOLDEN_IN_G"),*gb=getenv("GOLDEN_IN_B");
+      if (gx) { FILE *fx=fopen(gx,"rb"); if (fx && fread(xHost,sizeof(float),TOTAL,fx)==(size_t)TOTAL) golden=true; if(fx)fclose(fx); }
+      if (golden&&gg){FILE*f=fopen(gg,"rb");if(f){(void)!fread(gHost,sizeof(float),C,f);fclose(f);}}
+      if (golden&&gb){FILE*f=fopen(gb,"rb");if(f){(void)!fread(bHost,sizeof(float),C,f);fclose(f);}} }
     CHECK_ACL(aclrtMemcpy(xDev, tBytes, xHost, tBytes, ACL_MEMCPY_HOST_TO_DEVICE));
     CHECK_ACL(aclrtMemcpy(gDev, cBytes, gHost, cBytes, ACL_MEMCPY_HOST_TO_DEVICE));
     CHECK_ACL(aclrtMemcpy(bDev, cBytes, bHost, cBytes, ACL_MEMCPY_HOST_TO_DEVICE));
@@ -50,10 +56,11 @@ int32_t main()
     CHECK_ACL(aclrtSynchronizeStream(stream));
 
     CHECK_ACL(aclrtMemcpy(zHost, tBytes, zDev, tBytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if (golden) { const char *go=getenv("GOLDEN_OUT"); if(go){FILE*fo=fopen(go,"wb");if(fo){fwrite(zHost,sizeof(float),TOTAL,fo);fclose(fo);}} }
 
     const float expect = 0.0f;
     int errors = 0;
-    for (int i = 0; i < TOTAL; i++) {
+    for (int i = 0; !golden && i < TOTAL; i++) {
         if (fabsf(zHost[i] - expect) > 5e-3f) {
             if (errors < 5) printf("[CHECK] idx %d = %f (expect %f)\n", i, zHost[i], expect);
             errors++;

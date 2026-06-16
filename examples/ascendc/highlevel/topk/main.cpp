@@ -4,6 +4,7 @@
  */
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>   // getenv (golden bridge)
 #include <cstring>
 #include "acl/acl.h"
 #include "aclrtlaunch_k_custom.h"
@@ -49,6 +50,9 @@ int32_t main()
     CHECK_ACL(aclrtMallocHost((void **)&ziH, ziBytes));
     CHECK_ACL(aclrtMallocHost((void **)&tH, tBytes));
     for (int i = 0; i < N; i++) { xH[i] = (float)i; iH[i] = i; }
+    bool golden = false;
+    { const char *gx = getenv("GOLDEN_IN_X");
+      if (gx) { FILE *fx = fopen(gx, "rb"); if (fx && fread(xH, sizeof(float), N, fx) == (size_t)N) golden = true; if (fx) fclose(fx); } }
     memcpy(tH, &tiling, tBytes);
 
     uint8_t *xD = nullptr, *iD = nullptr, *zD = nullptr, *ziD = nullptr, *tD = nullptr;
@@ -65,12 +69,13 @@ int32_t main()
     CHECK_ACL(aclrtSynchronizeStream(stream));
 
     CHECK_ACL(aclrtMemcpy(zH, zBytes, zD, zBytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if (golden) { const char *go = getenv("GOLDEN_OUT"); if (go) { FILE *fo = fopen(go,"wb"); if (fo){ fwrite(zH,sizeof(float),K,fo); fclose(fo);} } }
     CHECK_ACL(aclrtMemcpy(ziH, ziBytes, ziD, ziBytes, ACL_MEMCPY_DEVICE_TO_HOST));
 
     int errors = 0;
     float expectV[K] = {31, 30, 29, 28};
     int32_t expectI[K] = {31, 30, 29, 28};
-    for (int i = 0; i < K; i++) {
+    for (int i = 0; !golden && i < K; i++) {
         if (zH[i] != expectV[i] || ziH[i] != expectI[i]) {
             printf("[CHECK] top%d val=%f idx=%d (expect %f,%d)\n", i, zH[i], ziH[i], expectV[i], expectI[i]);
             errors++;

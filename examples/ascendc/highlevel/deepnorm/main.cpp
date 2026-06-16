@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cmath>
+#include <cstdlib>   // getenv (golden bridge)
 #include "acl/acl.h"
 #include "aclrtlaunch_k_custom.h"
 
@@ -38,6 +39,12 @@ int32_t main()
     CHECK_ACL(aclrtMallocHost((void **)&meanH, bytes));
     CHECK_ACL(aclrtMallocHost((void **)&rstdH, bytes));
     for (int i = 0; i < H; i++) { xH[i] = 1.0f; gxH[i] = 0.0f; betaH[i] = 3.0f; gammaH[i] = 1.0f; }
+    bool golden = false;
+    { const char *gx=getenv("GOLDEN_IN_X"),*gy=getenv("GOLDEN_IN_Y"),*gg=getenv("GOLDEN_IN_G"),*gb=getenv("GOLDEN_IN_B");
+      if (gx) { FILE *fx=fopen(gx,"rb"); if (fx && fread(xH,sizeof(float),H,fx)==(size_t)H) golden=true; if(fx)fclose(fx); }
+      if (golden&&gy){FILE*f=fopen(gy,"rb");if(f){(void)!fread(gxH,sizeof(float),H,f);fclose(f);}}
+      if (golden&&gg){FILE*f=fopen(gg,"rb");if(f){(void)!fread(gammaH,sizeof(float),H,f);fclose(f);}}
+      if (golden&&gb){FILE*f=fopen(gb,"rb");if(f){(void)!fread(betaH,sizeof(float),H,f);fclose(f);}} }
 
     uint8_t *xD = nullptr, *gxD = nullptr, *betaD = nullptr, *gammaD = nullptr;
     uint8_t *zD = nullptr, *meanD = nullptr, *rstdD = nullptr;
@@ -57,10 +64,11 @@ int32_t main()
     CHECK_ACL(aclrtSynchronizeStream(stream));
 
     CHECK_ACL(aclrtMemcpy(zH, bytes, zD, bytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if (golden) { const char *go=getenv("GOLDEN_OUT"); if(go){FILE*fo=fopen(go,"wb");if(fo){fwrite(zH,sizeof(float),H,fo);fclose(fo);}} }
     CHECK_ACL(aclrtMemcpy(meanH, bytes, meanD, bytes, ACL_MEMCPY_DEVICE_TO_HOST));
 
     int errors = 0;
-    for (int i = 0; i < H; i++) {
+    for (int i = 0; !golden && i < H; i++) {
         if (fabsf(zH[i] - 3.0f) > 1e-3f) {
             if (errors < 8) printf("[CHECK] dst[%d]=%g (expect 3)\n", i, zH[i]);
             errors++;
