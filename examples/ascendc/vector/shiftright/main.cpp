@@ -1,4 +1,6 @@
 /* Host: ShiftRight, src0[i]=16, src1[i]=2 (int32) -> expect dst[i] = 16 >> 2 = 4. */
+#include <cstdlib>
+#include <cstdio>
 #include <cstdio>
 #include <cstdint>
 #include "acl/acl.h"
@@ -18,7 +20,9 @@ int32_t main()
     CHECK_ACL(aclrtMallocHost((void **)&x0H, bytes));
     CHECK_ACL(aclrtMallocHost((void **)&x1H, bytes));
     CHECK_ACL(aclrtMallocHost((void **)&zH, bytes));
-    for (int i = 0; i < N; i++) { x0H[i] = 16; x1H[i] = 2; }
+    bool golden=false;
+    { const char*gx=getenv("GOLDEN_IN_X"),*gy=getenv("GOLDEN_IN_Y"); if(gx&&gy){ FILE*fx=fopen(gx,"rb"),*fy=fopen(gy,"rb"); if(fx&&fy&&fread(x0H,sizeof(int32_t),N,fx)==(size_t)N&&fread(x1H,sizeof(int32_t),N,fy)==(size_t)N) golden=true; if(fx)fclose(fx); if(fy)fclose(fy);} }
+    if(!golden) for (int i = 0; i < N; i++) { x0H[i] = 16; x1H[i] = 2; }
     uint8_t *x0D = nullptr, *x1D = nullptr, *zD = nullptr;
     CHECK_ACL(aclrtMalloc((void **)&x0D, bytes, ACL_MEM_MALLOC_HUGE_FIRST));
     CHECK_ACL(aclrtMalloc((void **)&x1D, bytes, ACL_MEM_MALLOC_HUGE_FIRST));
@@ -29,6 +33,7 @@ int32_t main()
     ACLRT_LAUNCH_KERNEL(k_custom)(1, stream, x0D, x1D, zD);
     CHECK_ACL(aclrtSynchronizeStream(stream));
     CHECK_ACL(aclrtMemcpy(zH, bytes, zD, bytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if(golden){ const char*go=getenv("GOLDEN_OUT"); if(go){ FILE*fo=fopen(go,"wb"); if(fo){ fwrite(zH,sizeof(int32_t),N,fo); fclose(fo); printf("[GOLDEN] dumped %d ints\n",N);} } }
 
     const int32_t expect = 4;
     int errors = 0;

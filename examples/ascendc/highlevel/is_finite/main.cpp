@@ -2,6 +2,8 @@
  * Host launcher (single input): launches the k_custom kernel on the simulated Ascend device.
  * Input src=1.0 (float); output is bool. IsFinite(1.0) -> 1 (true).
  */
+#include <cstdlib>
+#include <cstdio>
 #include <cstdio>
 #include <cstdint>
 #include "acl/acl.h"
@@ -36,13 +38,16 @@ int32_t main()
     CHECK_ACL(aclrtMalloc((void **)&sDev, srcBytes, ACL_MEM_MALLOC_HUGE_FIRST));
     CHECK_ACL(aclrtMalloc((void **)&dDev, dstBytes, ACL_MEM_MALLOC_HUGE_FIRST));
 
-    for (int32_t i = 0; i < totalLen; i++) sHost[i] = 1.0f;
+    bool golden=false;
+    { const char*gx=getenv("GOLDEN_IN_X"); if(gx){ FILE*fx=fopen(gx,"rb"); if(fx&&fread(sHost,sizeof(float),totalLen,fx)==(size_t)totalLen) golden=true; if(fx)fclose(fx);} }
+    if(!golden) for (int32_t i = 0; i < totalLen; i++) sHost[i] = 1.0f;
     CHECK_ACL(aclrtMemcpy(sDev, srcBytes, sHost, srcBytes, ACL_MEMCPY_HOST_TO_DEVICE));
 
     ACLRT_LAUNCH_KERNEL(k_custom)(blockDim, stream, sDev, dDev);
     CHECK_ACL(aclrtSynchronizeStream(stream));
 
     CHECK_ACL(aclrtMemcpy(dHost, dstBytes, dDev, dstBytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if(golden){ const char*go=getenv("GOLDEN_OUT"); if(go){ FILE*fo=fopen(go,"wb"); if(fo){ fwrite(dHost,sizeof(uint8_t),totalLen,fo); fclose(fo); printf("[GOLDEN] dumped %d u8\n",totalLen);} } }
 
     const uint8_t expect = 1;  // IsFinite(1.0) -> true
     int errors = 0;
