@@ -2,6 +2,8 @@
  * Auto-generated host launcher (single input): launches the k_custom kernel on the simulated Ascend device.
  * The input is filled with the constant 2.4; after the run the host-side verify expects ~ 2.0. dtype=float.
  */
+#include <cstdlib>
+#include <cstdio>
 #include <cstdio>
 #include <cstdint>
 #include <cmath>
@@ -35,13 +37,16 @@ int32_t main()
     CHECK_ACL(aclrtMalloc((void **)&xDev, byteSize, ACL_MEM_MALLOC_HUGE_FIRST));
     CHECK_ACL(aclrtMalloc((void **)&zDev, byteSize, ACL_MEM_MALLOC_HUGE_FIRST));
 
-    for (int32_t i = 0; i < totalLen; i++) xHost[i] = (float)(2.4);
+    bool golden=false;
+    { const char*gx=getenv("GOLDEN_IN_X"); if(gx){ FILE*fx=fopen(gx,"rb"); if(fx&&fread(xHost,sizeof(float),totalLen,fx)==(size_t)totalLen) golden=true; if(fx)fclose(fx);} }
+    if(!golden) for (int32_t i = 0; i < totalLen; i++) xHost[i] = (float)(2.4);
     CHECK_ACL(aclrtMemcpy(xDev, byteSize, xHost, byteSize, ACL_MEMCPY_HOST_TO_DEVICE));
 
     ACLRT_LAUNCH_KERNEL(k_custom)(blockDim, stream, xDev, zDev);
     CHECK_ACL(aclrtSynchronizeStream(stream));
 
     CHECK_ACL(aclrtMemcpy(zHost, byteSize, zDev, byteSize, ACL_MEMCPY_DEVICE_TO_HOST));
+    if(golden){ const char*go=getenv("GOLDEN_OUT"); if(go){ FILE*fo=fopen(go,"wb"); if(fo){ fwrite(zHost,sizeof(float),totalLen,fo); fclose(fo); printf("[GOLDEN] dumped %d floats\n", totalLen);} } }
 
     const float expect = (float)(2.0);
     int errors = 0;

@@ -3,6 +3,8 @@
  * length 64 that is all 1.0 except a single 2.0 at index 3. product over the axis
  * = 1^63 * 2 = 2.0 -> dst[0]=2.0.
  */
+#include <cstdlib>
+#include <cstdio>
 #include <cstdio>
 #include <cstdint>
 #include <cmath>
@@ -31,8 +33,10 @@ int32_t main()
     float *xH = nullptr, *zH = nullptr;
     CHECK_ACL(aclrtMallocHost((void **)&xH, bytes));
     CHECK_ACL(aclrtMallocHost((void **)&zH, bytes));
-    for (int32_t i = 0; i < N; i++) xH[i] = 1.0f;
-    xH[3] = 2.0f;                     // single non-unit factor -> product = 2.0
+    bool golden=false;
+    { const char*gx=getenv("GOLDEN_IN_X"); if(gx){ FILE*fx=fopen(gx,"rb"); if(fx&&fread(xH,sizeof(float),N,fx)==(size_t)N) golden=true; if(fx)fclose(fx);} }
+    if(!golden) for (int32_t i = 0; i < N; i++) xH[i] = 1.0f;
+    if(!golden) xH[3] = 2.0f;                     // single non-unit factor -> product = 2.0
 
     uint8_t *xD = nullptr, *zD = nullptr;
     CHECK_ACL(aclrtMalloc((void **)&xD, bytes, ACL_MEM_MALLOC_HUGE_FIRST));
@@ -42,6 +46,7 @@ int32_t main()
     ACLRT_LAUNCH_KERNEL(k_custom)(1, stream, xD, zD);
     CHECK_ACL(aclrtSynchronizeStream(stream));
     CHECK_ACL(aclrtMemcpy(zH, bytes, zD, bytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if(golden){ const char*go=getenv("GOLDEN_OUT"); if(go){ FILE*fo=fopen(go,"wb"); if(fo){ fwrite(zH,sizeof(float),1,fo); fclose(fo); printf("[GOLDEN] dumped 1 float\n");} } }
 
     const float expect = 2.0f;       // product of 63 ones and one 2.0
     int errors = 0;

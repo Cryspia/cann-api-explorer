@@ -2,6 +2,8 @@
  * Host: single-core launch of the Mean kernel. Input [1,64] all 2.0,
  * last-axis mean over 64 elements -> dst[0] = 2.0.
  */
+#include <cstdlib>
+#include <cstdio>
 #include <cstdio>
 #include <cstdint>
 #include <cmath>
@@ -32,7 +34,9 @@ int32_t main()
     float *xH = nullptr, *zH = nullptr;
     CHECK_ACL(aclrtMallocHost((void **)&xH, inBytes));
     CHECK_ACL(aclrtMallocHost((void **)&zH, outBytes));
-    for (int32_t i = 0; i < IN_ELEM; i++) xH[i] = 2.0f;
+    bool golden=false;
+    { const char*gx=getenv("GOLDEN_IN_X"); if(gx){ FILE*fx=fopen(gx,"rb"); if(fx&&fread(xH,sizeof(float),IN_ELEM,fx)==(size_t)IN_ELEM) golden=true; if(fx)fclose(fx);} }
+    if(!golden) for (int32_t i = 0; i < IN_ELEM; i++) xH[i] = 2.0f;
 
     uint8_t *xD = nullptr, *zD = nullptr;
     CHECK_ACL(aclrtMalloc((void **)&xD, inBytes, ACL_MEM_MALLOC_HUGE_FIRST));
@@ -42,6 +46,7 @@ int32_t main()
     ACLRT_LAUNCH_KERNEL(k_custom)(1, stream, xD, zD);
     CHECK_ACL(aclrtSynchronizeStream(stream));
     CHECK_ACL(aclrtMemcpy(zH, outBytes, zD, outBytes, ACL_MEMCPY_DEVICE_TO_HOST));
+    if(golden){ const char*go=getenv("GOLDEN_OUT"); if(go){ FILE*fo=fopen(go,"wb"); if(fo){ fwrite(zH,sizeof(float),1,fo); fclose(fo); printf("[GOLDEN] dumped 1 float\n");} } }
 
     const float expect = 2.0f;       // mean of 64 twos
     int errors = 0;
